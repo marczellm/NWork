@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="NWork.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:NWork"
+    Shell.FlyoutBehavior="Disabled"
+    Title="NWork">
+	
+	<Shell.ToolbarItems>
+		<ToolbarItem Text="Log in" Clicked="Login_Clicked" x:Name="LoginButton" />
+	</Shell.ToolbarItems>
+	
+	<ShellContent
+        Title="Home"
+        ContentTemplate="{DataTemplate local:MainPage}"
+        Route="MainPage" />
+
+</Shell>
