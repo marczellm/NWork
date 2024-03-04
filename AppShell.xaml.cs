@@ -27,7 +27,10 @@
 			imageSource.Uri = new Uri(loggedInUser.avatarUrls.First().Value);
 			ToolbarItems.Remove(LoginButton);			
 			ToolbarItems.Add(LogoutButton);
-		}
+
+			var worklogs = await client.GetWorklogs();
+            Console.Out.WriteLine(worklogs);
+        }
 
 		private void Logout_Clicked(object? sender, EventArgs e)
 		{
