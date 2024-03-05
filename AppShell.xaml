@@ -6,14 +6,10 @@
     xmlns:local="clr-namespace:NWork"
     Shell.FlyoutBehavior="Disabled"
     Title="NWork">
-	
-	<Shell.ToolbarItems>
-		<ToolbarItem Text="Log in" Clicked="Login_Clicked" x:Name="LoginButton" />
-	</Shell.ToolbarItems>
-	
+
 	<ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
+        Title=""
+        ContentTemplate="{DataTemplate local:MainPage}"		
         Route="MainPage" />
 
 </Shell>

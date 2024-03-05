@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers.Text;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -14,6 +15,7 @@ namespace NWork.JiraClient
 	public class User
 	{
 		public string displayName { get; set; } = string.Empty;
+		public string accountId { get; set; } = string.Empty;
 	}
 
 	public class UserInfo : User
@@ -28,6 +30,8 @@ namespace NWork.JiraClient
 
 	class UpdatedWorklogs
 	{
+		public string nextPage { get; set; } = string.Empty;
+		public bool lastPage { get; set; } = false;
 		public IEnumerable<UpdatedWorklog> values { get; set; } = [];
 	}
 
@@ -37,6 +41,8 @@ namespace NWork.JiraClient
 		public string issueId { get; set; } = string.Empty;
 		public string started { get; set; } = string.Empty;
 		public int timeSpentSeconds { get; set; }
+		public DateTime startDate { get { return DateTime.Parse(started); } }
+		public DateTime endDate { get { return new DateTimeOffset(startDate).Add(TimeSpan.FromSeconds(timeSpentSeconds)).UtcDateTime;  } }
 	}
 
 	public class JiraClient
@@ -46,6 +52,9 @@ namespace NWork.JiraClient
 		public string Username { get; set; } = "mmarczell@graphisoft.com";
 		public string AccountId { get; set; } = "5c6bec9cb5b4a2652dac59e9";
 		public string APIToken { get; set; } = string.Empty;
+
+		private List<Worklog> worklogs = new();
+		private DateTime earliestWorklogUpdateDate = DateTime.Now;
 
 		public JiraClient()
 		{
@@ -64,26 +73,56 @@ namespace NWork.JiraClient
 
 		public async Task<UserInfo> GetUser()
 		{
-			var response = await client.GetAsync("user?accountId=" + AccountId);
-			//var str = await response.Content.ReadAsStringAsync();
+			var response = await client.GetAsync("myself");
 			var ret = await response.Content.ReadAsAsync<UserInfo>();
 			return ret;
 		}
 
-		public async Task<IEnumerable<Worklog>> GetWorklogs()
+		public async Task<IEnumerable<Worklog>> GetWorklogsBetween(DateTime start, DateTime end)
 		{
-			long utcDate = new DateTimeOffset(new DateTime(2024, 1, 1)).ToUnixTimeMilliseconds();
-			var response = await client.GetAsync("worklog/updated?since=" + utcDate);
-			var logIds = await response.Content.ReadAsAsync<UpdatedWorklogs>();
-			if (logIds == null)
+			if (start < earliestWorklogUpdateDate)
 			{
-				return [];
+				await RefreshWorklogsUpdatedSince(start);
 			}
-			int[] logIdList = logIds.values.Select(worklog => worklog.worklogId).ToArray();
-			var logDetailsResponse = await client.PostAsJsonAsync("worklog/list", logIdList);
-			var str = await logDetailsResponse.Content.ReadAsStringAsync();
-			var ret = await logDetailsResponse.Content.ReadAsAsync<IEnumerable<Worklog>>();
-			return ret;
+			return worklogs.Where(worklog => start <= worklog.startDate && worklog.startDate <= end);
+		}
+
+		public async Task RefreshWorklogsUpdatedSince(DateTime since)
+		{
+			if (since < earliestWorklogUpdateDate)
+			{
+				earliestWorklogUpdateDate = since;
+			}
+			else
+			{
+				since = earliestWorklogUpdateDate;
+			}
+
+			long utcDate = new DateTimeOffset(since).ToUnixTimeMilliseconds();
+
+			bool lastPage = false;
+			List<Worklog> ret = new();
+			string url = "worklog/updated?since=" + utcDate;
+			while (! lastPage)
+			{
+				Trace.WriteLine("Getting " + url);
+				var response = await client.GetAsync(url);
+				var logIds = await response.Content.ReadAsAsync<UpdatedWorklogs>();
+				if (logIds == null)
+				{
+					break;
+				}
+				int[] logIdList = logIds.values.Select(worklog => worklog.worklogId).ToArray();
+				var logDetailsResponse = await client.PostAsJsonAsync("worklog/list", new Dictionary<string, int[]>
+				{
+					{ "ids", logIdList }
+				});
+				ret.AddRange(await logDetailsResponse.Content.ReadAsAsync<IEnumerable<Worklog>>());
+				lastPage = logIds.lastPage;
+				url = logIds.nextPage;
+			}
+			
+			worklogs = ret.Where(worklog => worklog.author!.accountId == AccountId).ToList();
 		}
 	}
 }
