@@ -19,18 +19,39 @@ namespace NWork.WeekView
 	public abstract class WeekViewModel: INotifyPropertyChanged
 	{
 		private DateTime startDate;
+		private bool showSpinner = false;
 
-		public DateTime StartDate
+		public DateTime Monday
 		{
 			get => startDate;
 			set
 			{
 				startDate = value;
 				RaisePropertyChanged();
-				RaisePropertyChanged(nameof(EndDate));
+				RaisePropertyChanged(nameof(Tuesday));
+				RaisePropertyChanged(nameof(Wednesday));
+				RaisePropertyChanged(nameof(Thursday));
+				RaisePropertyChanged(nameof(Friday));
+				RaisePropertyChanged(nameof(Saturday));
+				RaisePropertyChanged(nameof(Sunday));
 			}
 		}
-		public DateTime EndDate { get {  return StartDate + TimeSpan.FromDays(4); } }
+		public DateTime Tuesday { get {  return Monday + TimeSpan.FromDays(1); } }
+		public DateTime Wednesday { get { return Monday + TimeSpan.FromDays(2); } }
+		public DateTime Thursday { get { return Monday + TimeSpan.FromDays(3); } }
+		public DateTime Friday { get { return Monday + TimeSpan.FromDays(4); } }
+		public DateTime Saturday { get { return Monday + TimeSpan.FromDays(5); } }
+		public DateTime Sunday { get { return Monday + TimeSpan.FromDays(6); } }
+
+		public bool ShowSpinner
+		{
+			get => showSpinner; 
+			set
+			{
+				showSpinner = value;
+				RaisePropertyChanged();
+			}
+		}
 
 		protected WeekViewModel()
 		{
@@ -39,18 +60,18 @@ namespace NWork.WeekView
 
 		public void PrevWeek()
 		{
-			StartDate = StartDate.AddDays(-7);
+			Monday = Monday.AddDays(-7);
 		}
 
 		public void NextWeek()
 		{
-			StartDate = StartDate.AddDays(7);
+			Monday = Monday.AddDays(7);
 		}
 
 		public void GoToday()
 		{
 			int diff = (7 + (DateTime.UtcNow.DayOfWeek - DayOfWeek.Monday)) % 7;
-			StartDate = DateTime.UtcNow.AddDays(-1 * diff).Date;
+			Monday = DateTime.UtcNow.AddDays(-1 * diff).Date;
 		}
 
 		public event PropertyChangedEventHandler? PropertyChanged;

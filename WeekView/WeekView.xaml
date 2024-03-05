@@ -35,8 +35,12 @@
 			</Style>
 		</ResourceDictionary>
 	</ContentView.Resources>
-	<VerticalStackLayout BindingContext="{Binding ViewModel, Source={x:Reference this}}">
-		<Grid>
+	<Grid BindingContext="{Binding ViewModel, Source={x:Reference this}}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+		<Grid Grid.Row="0">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition />
@@ -50,19 +54,98 @@
 					<Label.FormattedText>
 						<FormattedString>
 							<Span Text="🗓️ " />
-							<Span Text="{Binding StartDate, StringFormat='{0:yyyy-MM-dd}'}"/>
+							<Span Text="{Binding Monday, StringFormat='{0:yyyy-MM-dd}'}"/>
 							<Span Text=" - "/>
-							<Span Text="{Binding EndDate, StringFormat='{0:yyyy-MM-dd}'}"/>
+							<Span Text="{Binding Sunday, StringFormat='{0:yyyy-MM-dd}'}"/>
 						</FormattedString>
 					</Label.FormattedText>
 				</Label>
 				<Button Text="⮜" Margin="5" Clicked="PrevWeek" />
 				<Button Text="Today" Margin="5" Clicked="Today"/>
 				<Button Text="⮞" Margin="5" Clicked="NextWeek"/>
+				<ActivityIndicator Margin="5" IsRunning="{Binding ShowSpinner}"/>
 			</HorizontalStackLayout>
 			<HorizontalStackLayout Grid.Column="2">
 				<Label>Week</Label>
 			</HorizontalStackLayout>
 		</Grid>
-	</VerticalStackLayout>
+		<Grid Grid.Row="1" x:Name="CalendarGrid" BackgroundColor="WhiteSmoke" ZIndex="10">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" x:Name="HeaderRow"/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition Height="Auto" x:Name="TotalRow"/>
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" x:Name="HoursColumn"/>
+				<ColumnDefinition x:Name="MondayColumn"/>
+				<ColumnDefinition x:Name="TuesdayColumn"/>
+				<ColumnDefinition x:Name="WednesdayColumn"/>
+				<ColumnDefinition x:Name="ThursdayColumn"/>
+				<ColumnDefinition x:Name="FridayColumn"/>
+				<ColumnDefinition x:Name="SaturdayColumn"/>
+				<ColumnDefinition x:Name="SundayColumn"/>
+			</Grid.ColumnDefinitions>
+			<Label Grid.Row="0" Grid.Column="1" HorizontalTextAlignment="Center" Text="{Binding Monday, StringFormat='{0:dd ddd}'}"/>
+			<Label Grid.Row="0" Grid.Column="2" HorizontalTextAlignment="Center" Text="{Binding Tuesday, StringFormat='{0:dd ddd}'}"/>
+			<Label Grid.Row="0" Grid.Column="3" HorizontalTextAlignment="Center" Text="{Binding Wednesday, StringFormat='{0:dd ddd}'}"/>
+			<Label Grid.Row="0" Grid.Column="4" HorizontalTextAlignment="Center" Text="{Binding Thursday, StringFormat='{0:dd ddd}'}"/>
+			<Label Grid.Row="0" Grid.Column="5" HorizontalTextAlignment="Center" Text="{Binding Friday, StringFormat='{0:dd ddd}'}"/>
+			<Label Grid.Row="0" Grid.Column="6" HorizontalTextAlignment="Center" Text="{Binding Saturday, StringFormat='{0:dd ddd}'}"/>
+			<Label Grid.Row="0" Grid.Column="7" HorizontalTextAlignment="Center" Text="{Binding Sunday, StringFormat='{0:dd ddd}'}"/>
+			<Label Grid.Column="0" Grid.Row="1">07:00</Label>
+			<Label Grid.Column="0" Grid.Row="2">08:00</Label>
+			<Label Grid.Column="0" Grid.Row="3">09:00</Label>
+			<Label Grid.Column="0" Grid.Row="4">10:00</Label>
+			<Label Grid.Column="0" Grid.Row="5">11:00</Label>
+			<Label Grid.Column="0" Grid.Row="6">12:00</Label>
+			<Label Grid.Column="0" Grid.Row="7">13:00</Label>
+			<Label Grid.Column="0" Grid.Row="8">14:00</Label>
+			<Label Grid.Column="0" Grid.Row="9">15:00</Label>
+			<Label Grid.Column="0" Grid.Row="10">16:00</Label>
+			<Label Grid.Column="0" Grid.Row="11">17:00</Label>
+			<Label Grid.Column="0" Grid.Row="12">18:00</Label>
+			<Label Grid.Column="0" Grid.Row="13">19:00</Label>
+		</Grid>
+		<Grid Grid.Row="1" x:Name="EventsGrid" BackgroundColor="Transparent" ColumnSpacing="1" RowSpacing="1" ZIndex="20">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition x:Name="MondayEventsColumn"/>
+				<ColumnDefinition x:Name="TuesdayEventsColumn"/>
+				<ColumnDefinition x:Name="WednesdayEventsColumn"/>
+				<ColumnDefinition x:Name="ThursdayEventsColumn"/>
+				<ColumnDefinition x:Name="FridayEventsColumn"/>
+				<ColumnDefinition x:Name="SaturdayEventsColumn"/>
+				<ColumnDefinition x:Name="SundayEventsColumn"/>
+			</Grid.ColumnDefinitions>
+		</Grid>
+	</Grid>
 </ContentView>

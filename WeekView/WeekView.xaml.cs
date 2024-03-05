@@ -1,4 +1,4 @@
-using Microsoft.UI.Xaml.Controls;
+using Microsoft.Maui.Controls;
 
 namespace NWork.WeekView;
 
@@ -18,6 +18,20 @@ public partial class WeekView : ContentView
 	public WeekView()
 	{
 		InitializeComponent();
+		for (int i = 0; i < 8; i++)
+		{
+			for ( int j = 0; j < 14; j++ )
+			{
+				var cell = new Border
+				{
+					Stroke = new SolidColorBrush(Colors.DarkSlateGray),
+					StrokeThickness = 0.1
+				};
+				Grid.SetColumn(cell, i);
+				Grid.SetRow(cell, j);
+				CalendarGrid.Add(cell);
+			}
+		}
 	}
 
 	private void PrevWeek(object sender, EventArgs e)
