@@ -20,7 +20,7 @@ public partial class WeekView : ContentView
 		InitializeComponent();
 		for (int i = 0; i < 8; i++)
 		{
-			for ( int j = 0; j < 14; j++ )
+			for ( int j = 0; j < 15; j++ )
 			{
 				var cell = new Border
 				{
@@ -47,5 +47,10 @@ public partial class WeekView : ContentView
 	private void Today(object sender, EventArgs e)
 	{
 		ViewModel.GoToday();
+	}
+
+	private void IssueLinkTapped(object sender, TappedEventArgs e)
+	{
+		Launcher.OpenAsync("https://graphisoft.atlassian.net/browse/" + ((Label)sender).Text);
 	}
 }

@@ -1,4 +1,6 @@
-﻿namespace NWork
+﻿using NWork.Pages;
+
+namespace NWork
 {
 	public partial class MainPage : ContentPage
 	{
@@ -22,6 +24,11 @@
 		public ViewModel.WeekViewModelImpl ViewModel { get; set; }
 
 		private async void Login_Clicked(object sender, EventArgs e)
+		{
+			await Navigation.PushModalAsync(new LoginPage());
+		}
+
+		private async void LoginSuccess(object sender, EventArgs e)
 		{
 			var loggedInUser = await client.GetUser();
 			UserFullName = loggedInUser.displayName;

@@ -47,9 +47,8 @@
 				<ColumnDefinition Width="Auto"/>
 			</Grid.ColumnDefinitions>
 
-			<HorizontalStackLayout Grid.Column="0">
+			<HorizontalStackLayout Grid.Column="0" Spacing="10" Padding="5">
 				<Label VerticalTextAlignment="Center" 
-					Margin="5"
 					Padding="10">
 					<Label.FormattedText>
 						<FormattedString>
@@ -60,18 +59,28 @@
 						</FormattedString>
 					</Label.FormattedText>
 				</Label>
-				<Button Text="⮜" Margin="5" Clicked="PrevWeek" />
-				<Button Text="Today" Margin="5" Clicked="Today"/>
-				<Button Text="⮞" Margin="5" Clicked="NextWeek"/>
-				<ActivityIndicator Margin="5" IsRunning="{Binding ShowSpinner}"/>
+				<Button Text="⮜" Clicked="PrevWeek" />
+				<Button Text="Today" Clicked="Today"/>
+				<Button Text="⮞" Clicked="NextWeek"/>
+				<ActivityIndicator IsRunning="{Binding ShowSpinner}"/>
 			</HorizontalStackLayout>
-			<HorizontalStackLayout Grid.Column="2">
-				<Label>Week</Label>
+			<HorizontalStackLayout Grid.Column="2" Spacing="10" Padding="10">
+				<Label VerticalTextAlignment="Center">
+					<Label.FormattedText>
+						<FormattedString>
+							<FormattedString.Spans>
+								<Span Text="Week: "/>
+								<Span Text="{Binding WeekTotal.TotalHours, StringFormat='{0:N0}h '}"/>
+								<Span Text="{Binding WeekTotal, StringFormat='{0:mm}m'}"/>
+							</FormattedString.Spans>
+						</FormattedString>
+					</Label.FormattedText>
+				</Label>
 			</HorizontalStackLayout>
 		</Grid>
 		<Grid Grid.Row="1" x:Name="CalendarGrid" BackgroundColor="WhiteSmoke" ZIndex="10">
 			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" x:Name="HeaderRow"/>
+				<RowDefinition Height="20" x:Name="HeaderRow"/>
 				<RowDefinition/>
 				<RowDefinition/>
 				<RowDefinition/>
@@ -85,10 +94,10 @@
 				<RowDefinition/>
 				<RowDefinition/>
 				<RowDefinition/>
-				<RowDefinition Height="Auto" x:Name="TotalRow"/>
+				<RowDefinition Height="20" x:Name="TotalRow"/>
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" x:Name="HoursColumn"/>
+				<ColumnDefinition Width="50" x:Name="HoursColumn"/>
 				<ColumnDefinition x:Name="MondayColumn"/>
 				<ColumnDefinition x:Name="TuesdayColumn"/>
 				<ColumnDefinition x:Name="WednesdayColumn"/>
@@ -104,23 +113,32 @@
 			<Label Grid.Row="0" Grid.Column="5" HorizontalTextAlignment="Center" Text="{Binding Friday, StringFormat='{0:dd ddd}'}"/>
 			<Label Grid.Row="0" Grid.Column="6" HorizontalTextAlignment="Center" Text="{Binding Saturday, StringFormat='{0:dd ddd}'}"/>
 			<Label Grid.Row="0" Grid.Column="7" HorizontalTextAlignment="Center" Text="{Binding Sunday, StringFormat='{0:dd ddd}'}"/>
-			<Label Grid.Column="0" Grid.Row="1">07:00</Label>
-			<Label Grid.Column="0" Grid.Row="2">08:00</Label>
-			<Label Grid.Column="0" Grid.Row="3">09:00</Label>
-			<Label Grid.Column="0" Grid.Row="4">10:00</Label>
-			<Label Grid.Column="0" Grid.Row="5">11:00</Label>
-			<Label Grid.Column="0" Grid.Row="6">12:00</Label>
-			<Label Grid.Column="0" Grid.Row="7">13:00</Label>
-			<Label Grid.Column="0" Grid.Row="8">14:00</Label>
-			<Label Grid.Column="0" Grid.Row="9">15:00</Label>
-			<Label Grid.Column="0" Grid.Row="10">16:00</Label>
-			<Label Grid.Column="0" Grid.Row="11">17:00</Label>
-			<Label Grid.Column="0" Grid.Row="12">18:00</Label>
-			<Label Grid.Column="0" Grid.Row="13">19:00</Label>
+			<Label Grid.Column="0" Grid.Row="1" HorizontalTextAlignment="Center">07:00</Label>
+			<Label Grid.Column="0" Grid.Row="2" HorizontalTextAlignment="Center">08:00</Label>
+			<Label Grid.Column="0" Grid.Row="3" HorizontalTextAlignment="Center">09:00</Label>
+			<Label Grid.Column="0" Grid.Row="4" HorizontalTextAlignment="Center">10:00</Label>
+			<Label Grid.Column="0" Grid.Row="5" HorizontalTextAlignment="Center">11:00</Label>
+			<Label Grid.Column="0" Grid.Row="6" HorizontalTextAlignment="Center">12:00</Label>
+			<Label Grid.Column="0" Grid.Row="7" HorizontalTextAlignment="Center">13:00</Label>
+			<Label Grid.Column="0" Grid.Row="8" HorizontalTextAlignment="Center">14:00</Label>
+			<Label Grid.Column="0" Grid.Row="9" HorizontalTextAlignment="Center">15:00</Label>
+			<Label Grid.Column="0" Grid.Row="10" HorizontalTextAlignment="Center">16:00</Label>
+			<Label Grid.Column="0" Grid.Row="11" HorizontalTextAlignment="Center">17:00</Label>
+			<Label Grid.Column="0" Grid.Row="12" HorizontalTextAlignment="Center">18:00</Label>
+			<Label Grid.Column="0" Grid.Row="13" HorizontalTextAlignment="Center">19:00</Label>
+			<Label Grid.Row="14" Grid.Column="1" HorizontalTextAlignment="Center" Text="{Binding MondayTotal, StringFormat='{0:hh\\:mm}'}"/>
+			<Label Grid.Row="14" Grid.Column="2" HorizontalTextAlignment="Center" Text="{Binding TuesdayTotal, StringFormat='{0:hh\\:mm}'}"/>
+			<Label Grid.Row="14" Grid.Column="3" HorizontalTextAlignment="Center" Text="{Binding WednesdayTotal, StringFormat='{0:hh\\:mm}'}"/>
+			<Label Grid.Row="14" Grid.Column="4" HorizontalTextAlignment="Center" Text="{Binding ThursdayTotal, StringFormat='{0:hh\\:mm}'}"/>
+			<Label Grid.Row="14" Grid.Column="5" HorizontalTextAlignment="Center" Text="{Binding FridayTotal, StringFormat='{0:hh\\:mm}'}"/>
+			<Label Grid.Row="14" Grid.Column="6" HorizontalTextAlignment="Center" Text="{Binding SaturdayTotal, StringFormat='{0:hh\\:mm}'}"/>
+			<Label Grid.Row="14" Grid.Column="7" HorizontalTextAlignment="Center" Text="{Binding SundayTotal, StringFormat='{0:hh\\:mm}'}"/>
 		</Grid>
-		<Grid Grid.Row="1" x:Name="EventsGrid" BackgroundColor="Transparent" ColumnSpacing="1" RowSpacing="1" ZIndex="20">
+		
+		<Grid Grid.Row="1" x:Name="EventsGrid" BackgroundColor="Transparent" ZIndex="20"
+			  BindableLayout.ItemsSource="{Binding Events}">
 			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="20"/>
 				<RowDefinition/>
 				<RowDefinition/>
 				<RowDefinition/>
@@ -134,10 +152,49 @@
 				<RowDefinition/>
 				<RowDefinition/>
 				<RowDefinition/>
-				<RowDefinition Height="Auto"/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition Height="20"/>
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="50"/>
 				<ColumnDefinition x:Name="MondayEventsColumn"/>
 				<ColumnDefinition x:Name="TuesdayEventsColumn"/>
 				<ColumnDefinition x:Name="WednesdayEventsColumn"/>
@@ -146,6 +203,29 @@
 				<ColumnDefinition x:Name="SaturdayEventsColumn"/>
 				<ColumnDefinition x:Name="SundayEventsColumn"/>
 			</Grid.ColumnDefinitions>
+			<BindableLayout.ItemTemplate>
+				<DataTemplate>
+					<Border Background="White" Grid.Row="{Binding Row}" Grid.Column="{Binding Column}" Grid.RowSpan="{Binding RowSpan}"
+							ToolTipProperties.Text="{Binding Tooltip}">
+						<Border.StrokeShape>
+							<RoundRectangle CornerRadius="2"/>
+						</Border.StrokeShape>
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition/>
+								<RowDefinition Height="Auto"/>
+							</Grid.RowDefinitions>
+							<Label Grid.Row="0" Text="{Binding Description}"/>
+							<Label Grid.Row="2" Text="{Binding Title}" TextColor="DodgerBlue">
+								<Label.GestureRecognizers>
+									<TapGestureRecognizer Tapped="IssueLinkTapped"/>
+								</Label.GestureRecognizers>
+							</Label>
+						</Grid>
+					</Border>
+				</DataTemplate>
+			</BindableLayout.ItemTemplate>
 		</Grid>
 	</Grid>
 </ContentView>

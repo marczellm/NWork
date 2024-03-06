@@ -35,12 +35,26 @@ namespace NWork.JiraClient
 		public IEnumerable<UpdatedWorklog> values { get; set; } = [];
 	}
 
+	class IssueFields
+	{
+		public string summary { get; set; } = string.Empty;
+	}
+
+	class Issue
+	{
+		public string key { get; set; } = string.Empty;
+		public IssueFields? fields { get; set; }
+	}
+
 	public class Worklog
 	{
 		public User? author { get; set; }
 		public string issueId { get; set; } = string.Empty;
 		public string started { get; set; } = string.Empty;
 		public int timeSpentSeconds { get; set; }
+
+		public string issueKey { get; set; } = string.Empty;
+		public string issueTitle { get; set; } = string.Empty;
 		public DateTime startDate { get { return DateTime.Parse(started); } }
 		public DateTime endDate { get { return new DateTimeOffset(startDate).Add(TimeSpan.FromSeconds(timeSpentSeconds)).UtcDateTime;  } }
 	}
@@ -53,7 +67,7 @@ namespace NWork.JiraClient
 		public string AccountId { get; set; } = "5c6bec9cb5b4a2652dac59e9";
 		public string APIToken { get; set; } = string.Empty;
 
-		private List<Worklog> worklogs = new();
+		private List<Worklog> worklogs = [];
 		private DateTime earliestWorklogUpdateDate = DateTime.Now;
 
 		public JiraClient()
@@ -68,14 +82,19 @@ namespace NWork.JiraClient
 			string base64token = CryptographicBuffer.EncodeToBase64String(buffer);
 			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64token);
 			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-			client.BaseAddress = new Uri("https://graphisoft.atlassian.net/rest/api/3/");			
+			client.BaseAddress = new Uri("https://graphisoft.atlassian.net/rest/api/3/");
 		}
 
 		public async Task<UserInfo> GetUser()
 		{
 			var response = await client.GetAsync("myself");
-			var ret = await response.Content.ReadAsAsync<UserInfo>();
-			return ret;
+			return await response.Content.ReadAsAsync<UserInfo>();
+		}
+
+		async Task<Issue> GetIssue(string id)
+		{
+			var response = await client.GetAsync("issue/" + id + "?fields=summary");
+			return await response.Content.ReadAsAsync<Issue>();
 		}
 
 		public async Task<IEnumerable<Worklog>> GetWorklogsBetween(DateTime start, DateTime end)
@@ -105,7 +124,6 @@ namespace NWork.JiraClient
 			string url = "worklog/updated?since=" + utcDate;
 			while (! lastPage)
 			{
-				Trace.WriteLine("Getting " + url);
 				var response = await client.GetAsync(url);
 				var logIds = await response.Content.ReadAsAsync<UpdatedWorklogs>();
 				if (logIds == null)
@@ -123,6 +141,13 @@ namespace NWork.JiraClient
 			}
 			
 			worklogs = ret.Where(worklog => worklog.author!.accountId == AccountId).ToList();
+
+			foreach (var worklog in worklogs)
+			{
+				var issue = await GetIssue(worklog.issueId);
+				worklog.issueKey = issue.key;
+				worklog.issueTitle = issue.fields!.summary;
+			}
 		}
 	}
 }

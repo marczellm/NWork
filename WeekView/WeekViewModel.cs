@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace NWork.WeekView
 {
@@ -14,12 +15,53 @@ namespace NWork.WeekView
 		public string Description { get; set; } = string.Empty;
 		public DateTime Started { get; set; }
 		public TimeSpan Duration { get; set; }
+
+		public uint Column
+		{
+			get
+			{
+				if (Started.DayOfWeek == DayOfWeek.Sunday)
+				{
+					return 7;
+				}
+				else
+				{
+					return (uint)Started.DayOfWeek;
+				}
+			}
+		}
+
+		public uint Row 
+		{ 
+			get
+			{
+				var baseDate = Started.Date + TimeSpan.FromHours(7);
+				return (uint)Math.Round(Started.Subtract(baseDate).TotalMinutes / 15) + 1;
+			} 
+		}
+
+		public uint RowSpan
+		{
+			get
+			{
+				return (uint)Math.Round(Duration.TotalMinutes / 15);
+			}
+		}
+
+		public string Tooltip
+		{
+			get
+			{
+				return $"{Description}\nStarted: {Started.TimeOfDay}\nEnded: {(Started + Duration).TimeOfDay}\nTime spent: {Duration}";
+			}
+		}
 	}
 
 	public abstract class WeekViewModel: INotifyPropertyChanged
 	{
 		private DateTime startDate;
 		private bool showSpinner = false;
+		private IEnumerable<Event> events = [];
 
 		public DateTime Monday
 		{
@@ -42,6 +84,88 @@ namespace NWork.WeekView
 		public DateTime Friday { get { return Monday + TimeSpan.FromDays(4); } }
 		public DateTime Saturday { get { return Monday + TimeSpan.FromDays(5); } }
 		public DateTime Sunday { get { return Monday + TimeSpan.FromDays(6); } }
+
+		public TimeSpan MondayTotal
+		{
+			get
+			{
+				return Events.Where(ev => ev.Started < Tuesday).Aggregate(TimeSpan.Zero, (partialSum, ev) => partialSum + ev.Duration);
+			}
+		}
+
+		public TimeSpan TuesdayTotal
+		{
+			get
+			{
+				return Events.Where(ev => Tuesday < ev.Started && ev.Started < Wednesday).Aggregate(TimeSpan.Zero, (partialSum, ev) => partialSum + ev.Duration);
+			}
+		}
+
+		public TimeSpan WednesdayTotal
+		{
+			get
+			{
+				return Events.Where(ev => Wednesday < ev.Started && ev.Started < Thursday).Aggregate(TimeSpan.Zero, (partialSum, ev) => partialSum + ev.Duration);
+			}
+		}
+
+		public TimeSpan ThursdayTotal
+		{
+			get
+			{
+				return Events.Where(ev => Thursday < ev.Started && ev.Started < Friday).Aggregate(TimeSpan.Zero, (partialSum, ev) => partialSum + ev.Duration);
+			}
+		}
+
+		public TimeSpan FridayTotal
+		{
+			get
+			{
+				return Events.Where(ev => Friday < ev.Started && ev.Started < Saturday).Aggregate(TimeSpan.Zero, (partialSum, ev) => partialSum + ev.Duration);
+			}
+		}
+
+		public TimeSpan SaturdayTotal
+		{
+			get
+			{
+				return Events.Where(ev => Saturday < ev.Started && ev.Started < Sunday).Aggregate(TimeSpan.Zero, (partialSum, ev) => partialSum + ev.Duration);
+			}
+		}
+
+		public TimeSpan SundayTotal
+		{
+			get
+			{
+				return Events.Where(ev => Sunday < ev.Started).Aggregate(TimeSpan.Zero, (partialSum, ev) => partialSum + ev.Duration);
+			}
+		}
+
+		public TimeSpan WeekTotal
+		{
+			get
+			{
+				return Events.Aggregate(TimeSpan.Zero, (partialSum, ev) => partialSum + ev.Duration);
+			}
+		}
+
+		public IEnumerable<Event> Events
+		{
+			get => events; 
+			set
+			{
+				events = value;
+				RaisePropertyChanged();
+				RaisePropertyChanged(nameof(MondayTotal));
+				RaisePropertyChanged(nameof(TuesdayTotal));
+				RaisePropertyChanged(nameof(WednesdayTotal));
+				RaisePropertyChanged(nameof(ThursdayTotal));
+				RaisePropertyChanged(nameof(FridayTotal));
+				RaisePropertyChanged(nameof(Saturday));
+				RaisePropertyChanged(nameof(SundayTotal));
+				RaisePropertyChanged(nameof(WeekTotal));
+			}
+		}
 
 		public bool ShowSpinner
 		{

@@ -1,4 +1,5 @@
-﻿using NWork.WeekView;
+﻿using NWork.JiraClient;
+using NWork.WeekView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace NWork.ViewModel
 {
 	public class WeekViewModelImpl: WeekViewModel
 	{
-		private JiraClient.JiraClient client;
+		private readonly JiraClient.JiraClient client;
 		public WeekViewModelImpl(JiraClient.JiraClient client)
 		{
 			this.client = client;
@@ -21,7 +22,15 @@ namespace NWork.ViewModel
 			if (e.PropertyName == nameof(Monday))
 			{
 				ShowSpinner = true;
-				await client.GetWorklogsBetween(Monday, Sunday);
+				Events = [];
+				var worklogs = await client.GetWorklogsBetween(Monday, Sunday + TimeSpan.FromHours(23));
+				Events = worklogs.Select(worklog => new Event()
+				{
+					Title = worklog.issueKey,
+					Started = DateTime.Parse(worklog.started),
+					Duration = TimeSpan.FromSeconds(worklog.timeSpentSeconds),
+					Description = worklog.issueTitle
+				});
 				ShowSpinner = false;
 			}
 		}
