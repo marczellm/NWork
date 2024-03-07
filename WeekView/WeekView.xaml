@@ -2,6 +2,7 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+			 xmlns:weekview="clr-namespace:NWork.WeekView"
              x:Class="NWork.WeekView.WeekView"
 			 x:Name="this">
 	<ContentView.Resources>
@@ -35,7 +36,7 @@
 			</Style>
 		</ResourceDictionary>
 	</ContentView.Resources>
-	<Grid BindingContext="{Binding ViewModel, Source={x:Reference this}}">
+	<Grid BindingContext="{Binding ViewModel, Source={x:Reference this}}" x:DataType="weekview:WeekViewModel">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
@@ -70,8 +71,8 @@
 						<FormattedString>
 							<FormattedString.Spans>
 								<Span Text="Week: "/>
-								<Span Text="{Binding WeekTotal.TotalHours, StringFormat='{0:N0}h '}"/>
-								<Span Text="{Binding WeekTotal, StringFormat='{0:mm}m'}"/>
+								<Span Text="{Binding WeekTotal.TotalHours, StringFormat='{0:N0}h '}"	x:DataType="weekview:WeekViewModel"/>
+								<Span Text="{Binding WeekTotal, StringFormat='{0:mm}m'}"				x:DataType="weekview:WeekViewModel"/>
 							</FormattedString.Spans>
 						</FormattedString>
 					</Label.FormattedText>
@@ -206,7 +207,8 @@
 			<BindableLayout.ItemTemplate>
 				<DataTemplate>
 					<Border Background="White" Grid.Row="{Binding Row}" Grid.Column="{Binding Column}" Grid.RowSpan="{Binding RowSpan}"
-							ToolTipProperties.Text="{Binding Tooltip}">
+							ToolTipProperties.Text="{Binding Tooltip}"
+							x:DataType="weekview:Event">
 						<Border.StrokeShape>
 							<RoundRectangle CornerRadius="2"/>
 						</Border.StrokeShape>
