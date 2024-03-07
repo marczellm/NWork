@@ -63,37 +63,55 @@ namespace NWork.JiraClient
 
 	public class JiraClient
 	{
-		private HttpClient client = new();
-
-		public string Username { get; set; } = "mmarczell@graphisoft.com";
-		public string AccountId { get; set; } = "5c6bec9cb5b4a2652dac59e9";
-		public string APIToken { get; set; } = string.Empty;
+		private HttpClient client = new()
+		{
+			BaseAddress = new Uri("https://graphisoft.atlassian.net/rest/api/3/")
+		};
 
 		public JiraClient()
 		{
-			Login();
+			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 		}
 
-		public void Login()
+		public async Task<bool> Login(string username, string apitoken)
 		{
-			APIToken = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "../../../../../token.txt");
-			var buffer = CryptographicBuffer.ConvertStringToBinary(Username + ":" + APIToken, BinaryStringEncoding.Utf8);
+			var buffer = CryptographicBuffer.ConvertStringToBinary(username + ":" + apitoken, BinaryStringEncoding.Utf8);
 			string base64token = CryptographicBuffer.EncodeToBase64String(buffer);
 			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64token);
-			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-			client.BaseAddress = new Uri("https://graphisoft.atlassian.net/rest/api/3/");
+
+			var user = await GetUser();
+			if (user != null)
+			{
+				Preferences.Default.Set("username", username);
+				Preferences.Default.Set("apitoken", apitoken);
+				LoggedIn?.Invoke(user);
+				return true;
+			}
+			return false;
 		}
 
-		public async Task<UserInfo> GetUser()
+		public void Logout()
+		{
+			LoggedOut?.Invoke(this, new());
+		}
+
+		public delegate void LoginSuccessHandler(UserInfo user);
+		public event LoginSuccessHandler? LoggedIn;
+		public event EventHandler? LoggedOut;
+
+		// Returns null on error
+		public async Task<UserInfo?> GetUser()
 		{
 			var response = await client.GetAsync("myself");
+			try
+			{
+				response.EnsureSuccessStatusCode();
+			}
+			catch (HttpRequestException)
+			{
+				return null;
+			}
 			return await response.Content.ReadAsAsync<UserInfo>();
-		}
-
-		async Task<Issue> GetIssue(string id)
-		{
-			var response = await client.GetAsync("issue/" + id + "?fields=summary");
-			return await response.Content.ReadAsAsync<Issue>();
 		}
 
 		async Task<WorklogResult> GetIssueWorklogs(string idOrKey)

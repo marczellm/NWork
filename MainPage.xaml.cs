@@ -1,4 +1,5 @@
-﻿using NWork.Pages;
+﻿using NWork.JiraClient;
+using NWork.Pages;
 
 namespace NWork
 {
@@ -6,10 +7,21 @@ namespace NWork
 	{
 		public MainPage()
 		{
+			client.LoggedIn += OnLoggedIn;
+			client.LoggedOut += OnLoggedOut;
 			ViewModel = new(client);
 			InitializeComponent();
 			LogoutButton.Clicked += Logout_Clicked;
 			LogoutButton.IconImageSource = imageSource;
+
+			// Get previous login from preferences
+
+			string username = Preferences.Default.Get("username", "");
+			string apitoken = Preferences.Default.Get("apitoken", "");
+			if (username != "" && apitoken != "")
+			{
+				_ = client.Login(username, apitoken);
+			}
 		}
 
 		public bool LoggedIn { get; set; } = false;
@@ -20,24 +32,30 @@ namespace NWork
 		{
 			Text = "Log out"
 		};
-		private JiraClient.JiraClient client = new();
+		private readonly JiraClient.JiraClient client = new();
 		public ViewModel.WeekViewModelImpl ViewModel { get; set; }
 
 		private async void Login_Clicked(object sender, EventArgs e)
 		{
-			await Navigation.PushModalAsync(new LoginPage());
+			await Navigation.PushModalAsync(new LoginPage(client,
+				Preferences.Default.Get("username", ""),
+				Preferences.Default.Get("apitoken", "")));
 		}
 
-		private async void LoginSuccess(object sender, EventArgs e)
+		private void Logout_Clicked(object? sender, EventArgs e)
 		{
-			var loggedInUser = await client.GetUser();
-			UserFullName = loggedInUser.displayName;
-			imageSource.Uri = new Uri(loggedInUser.avatarUrls["48x48"]);
+			client.Logout();
+		}
+
+		private void OnLoggedIn(UserInfo user)
+		{
+			UserFullName = user.displayName;
+			imageSource.Uri = new Uri(user.avatarUrls["48x48"]);
 			ToolbarItems.Remove(LoginButton);
 			ToolbarItems.Add(LogoutButton);
 		}
 
-		private void Logout_Clicked(object? sender, EventArgs e)
+		private void OnLoggedOut(object? sender, EventArgs e)
 		{
 			ToolbarItems.Add(LoginButton);
 			ToolbarItems.Remove(LogoutButton);

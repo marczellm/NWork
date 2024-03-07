@@ -14,8 +14,21 @@ namespace NWork.ViewModel
 		public WeekViewModelImpl(JiraClient.JiraClient client)
 		{
 			this.client = client;
+			client.LoggedIn += OnLoggedIn;
+			client.LoggedOut += OnLoggedOut;
 			PropertyChanged += WeekViewModelImpl_PropertyChanged;
 		}
+
+		private void OnLoggedIn(UserInfo user)
+		{
+			GoToday();
+		}
+
+		private void OnLoggedOut(object? sender, EventArgs e)
+		{
+			Events = [];
+		}
+
 
 		private async void WeekViewModelImpl_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{

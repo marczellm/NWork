@@ -71,8 +71,8 @@
 						<FormattedString>
 							<FormattedString.Spans>
 								<Span Text="Week: "/>
-								<Span Text="{Binding WeekTotal.TotalHours, StringFormat='{0:N0}h '}"	x:DataType="weekview:WeekViewModel"/>
-								<Span Text="{Binding WeekTotal, StringFormat='{0:mm}m'}"				x:DataType="weekview:WeekViewModel"/>
+								<Span Text="{Binding WeekTotal.TotalHours, StringFormat='{0:N0}h'}"	x:DataType="weekview:WeekViewModel"/>
+								<Span Text="{Binding WeekTotal, StringFormat=' {0:mm}m'}"				x:DataType="weekview:WeekViewModel"/>
 							</FormattedString.Spans>
 						</FormattedString>
 					</Label.FormattedText>

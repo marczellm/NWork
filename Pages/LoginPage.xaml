@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"			 
+			 xmlns:pages="clr-namespace:NWork.Pages"
              x:Class="NWork.Pages.LoginPage"
              Title="Login"
 			 WidthRequest="500"
-			 HeightRequest="500">
+			 HeightRequest="500"
+			 x:Name="this"
+			 BindingContext="{x:Reference this}"
+			 x:DataType="pages:LoginPage">
 	<Border>
 		<Border.Shadow>
 			<Shadow Brush="Black"
@@ -14,14 +18,15 @@
 		</Border.Shadow>
 		<VerticalStackLayout Spacing="10" BackgroundColor="White" Padding="10">
 			<Label Text="Log in to Jira" HorizontalTextAlignment="Center" FontAttributes="Bold"/>
-			<Entry Placeholder="Username" />
-			<Editor Placeholder="API token" HeightRequest="100"/>
+			<Entry Placeholder="User email" x:Name="UsernameField" />
+			<Editor Placeholder="API token" HeightRequest="100" x:Name="TokenField"/>
 			<Label Text="Manage API tokens" HorizontalTextAlignment="Center" TextColor="DodgerBlue" TextDecorations="Underline">
 				<Label.GestureRecognizers>
 					<TapGestureRecognizer Tapped="ManageAPITokens"/>
 				</Label.GestureRecognizers>
 			</Label>
 			<Button Text="Log in" Clicked="DoLogin"/>
+			<Label Text="Login unsuccessful" TextColor="Red" HorizontalTextAlignment="Center" IsVisible="{Binding ErrorVisible}" />
 		</VerticalStackLayout>
 	</Border>
 </ContentPage>
