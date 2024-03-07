@@ -7,8 +7,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.Security.Cryptography;
-using Windows.Web.Http.Headers;
+using System.Security.Cryptography;
 
 namespace NWork.JiraClient
 {
@@ -75,8 +74,8 @@ namespace NWork.JiraClient
 
 		public async Task<bool> Login(string username, string apitoken)
 		{
-			var buffer = CryptographicBuffer.ConvertStringToBinary(username + ":" + apitoken, BinaryStringEncoding.Utf8);
-			string base64token = CryptographicBuffer.EncodeToBase64String(buffer);
+			var buffer = Encoding.UTF8.GetBytes(username + ":" + apitoken);
+			string base64token = Convert.ToBase64String(buffer);
 			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64token);
 
 			var user = await GetUser();
