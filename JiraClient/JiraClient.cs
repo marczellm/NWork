@@ -23,27 +23,29 @@ namespace NWork.JiraClient
 		public Dictionary<string, string> avatarUrls { get; set; } = [];
 	}
 
-	class UpdatedWorklog
+	class WorklogResult
 	{
-		public int worklogId { get; set; }
-	}
-
-	class UpdatedWorklogs
-	{
-		public string nextPage { get; set; } = string.Empty;
-		public bool lastPage { get; set; } = false;
-		public IEnumerable<UpdatedWorklog> values { get; set; } = [];
+		public uint startAt { get; set; }
+		public uint maxResults { get; set; }
+		public uint total { get; set; }
+		public IEnumerable<Worklog> worklogs { get; set; } = [];
 	}
 
 	class IssueFields
 	{
 		public string summary { get; set; } = string.Empty;
+		public WorklogResult? worklog { get; set; }
 	}
 
 	class Issue
 	{
 		public string key { get; set; } = string.Empty;
 		public IssueFields? fields { get; set; }
+	}
+
+	class SearchResult
+	{
+		public IEnumerable<Issue> issues { get; set; } = [];
 	}
 
 	public class Worklog
@@ -66,9 +68,6 @@ namespace NWork.JiraClient
 		public string Username { get; set; } = "mmarczell@graphisoft.com";
 		public string AccountId { get; set; } = "5c6bec9cb5b4a2652dac59e9";
 		public string APIToken { get; set; } = string.Empty;
-
-		private List<Worklog> worklogs = [];
-		private DateTime earliestWorklogUpdateDate = DateTime.Now;
 
 		public JiraClient()
 		{
@@ -97,57 +96,34 @@ namespace NWork.JiraClient
 			return await response.Content.ReadAsAsync<Issue>();
 		}
 
-		public async Task<IEnumerable<Worklog>> GetWorklogsBetween(DateTime start, DateTime end)
+		async Task<WorklogResult> GetIssueWorklogs(string idOrKey)
 		{
-			if (start < earliestWorklogUpdateDate)
-			{
-				await RefreshWorklogsUpdatedSince(start);
-			}
-			return worklogs.Where(worklog => start <= worklog.startDate && worklog.startDate <= end);
+			var response = await client.GetAsync("issue/" + idOrKey + "/worklog");
+			return await response.Content.ReadAsAsync<WorklogResult>();
 		}
 
-		public async Task RefreshWorklogsUpdatedSince(DateTime since)
+		public async Task<IEnumerable<Worklog>> GetWorklogsBetween(DateTime start, DateTime end)
 		{
-			if (since < earliestWorklogUpdateDate)
+			var url = $"search?jql=worklogAuthor in (currentUser()) and worklogDate >= '{start:yyyy-MM-dd}' and worklogDate <= '{end:yyyy-MM-dd}'&fields=summary,worklog&maxResults=200";
+			var response = await client.GetAsync(url);
+			var resstr = await response.Content.ReadAsStringAsync();
+			var result = await response.Content.ReadAsAsync<SearchResult>();
+			foreach (var issue in result.issues)
 			{
-				earliestWorklogUpdateDate = since;
-			}
-			else
-			{
-				since = earliestWorklogUpdateDate;
-			}
-
-			long utcDate = new DateTimeOffset(since).ToUnixTimeMilliseconds();
-
-			bool lastPage = false;
-			List<Worklog> ret = new();
-			string url = "worklog/updated?since=" + utcDate;
-			while (! lastPage)
-			{
-				var response = await client.GetAsync(url);
-				var logIds = await response.Content.ReadAsAsync<UpdatedWorklogs>();
-				if (logIds == null)
+				var worklogResult = issue.fields!.worklog!;
+				if (worklogResult.total > worklogResult.maxResults)
 				{
-					break;
+					worklogResult = await GetIssueWorklogs(issue.key);
 				}
-				int[] logIdList = logIds.values.Select(worklog => worklog.worklogId).ToArray();
-				var logDetailsResponse = await client.PostAsJsonAsync("worklog/list", new Dictionary<string, int[]>
-				{
-					{ "ids", logIdList }
-				});
-				ret.AddRange(await logDetailsResponse.Content.ReadAsAsync<IEnumerable<Worklog>>());
-				lastPage = logIds.lastPage;
-				url = logIds.nextPage;
+				foreach (var worklog in worklogResult.worklogs)
+				{					
+					worklog.issueKey = issue.key;
+					worklog.issueTitle = issue.fields!.summary;
+				}
+				issue.fields!.worklog = worklogResult;
 			}
-			
-			worklogs = ret.Where(worklog => worklog.author!.accountId == AccountId).ToList();
-
-			foreach (var worklog in worklogs)
-			{
-				var issue = await GetIssue(worklog.issueId);
-				worklog.issueKey = issue.key;
-				worklog.issueTitle = issue.fields!.summary;
-			}
+			var ret = result.issues.SelectMany(issue => issue.fields!.worklog!.worklogs).Where(worklog => worklog.startDate >= start && worklog.endDate <= end);
+			return ret;
 		}
 	}
 }
