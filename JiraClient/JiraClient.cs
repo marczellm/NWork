@@ -91,6 +91,7 @@ namespace NWork.JiraClient
 
 		public void Logout()
 		{
+			client.DefaultRequestHeaders.Authorization = null;
 			LoggedOut?.Invoke(this, new());
 		}
 

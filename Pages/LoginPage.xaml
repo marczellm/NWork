@@ -19,7 +19,7 @@
                 Opacity="0.3" />
 		</Border.Shadow>
 		<VerticalStackLayout BackgroundColor="White">
-			<Grid BackgroundColor="WhiteSmoke" HeightRequest="40" Padding="10">
+			<Grid BackgroundColor="WhiteSmoke" HeightRequest="44" Padding="10">
 				<Label Text="Log in to Jira" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontAttributes="Bold" FontFamily=""/>
 				<Button Text="Cancel" 
 						HorizontalOptions="Start" 
@@ -27,7 +27,8 @@
 						TextColor="Blue" 
 						BackgroundColor="Transparent"
 						FontFamily="" 
-						Clicked="OnCancel">
+						Clicked="OnCancel"
+						BorderWidth="0">
 					<VisualStateManager.VisualStateGroups>
 						<VisualStateGroupList>
 							<VisualStateGroup x:Name="CommonStates">
@@ -39,7 +40,7 @@
 
 								<VisualState x:Name="Pressed">
 									<VisualState.Setters>
-										<Setter Property="TextColor" Value="AliceBlue" />
+										<Setter Property="TextColor" Value="LightBlue" />
 									</VisualState.Setters>
 								</VisualState>
 							</VisualStateGroup>
