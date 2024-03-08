@@ -26,7 +26,6 @@
 						VerticalOptions="Center" 
 						TextColor="Blue" 
 						BackgroundColor="Transparent"
-						FontFamily="" 
 						Clicked="OnCancel"
 						BorderWidth="0">
 					<VisualStateManager.VisualStateGroups>
