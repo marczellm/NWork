@@ -8,7 +8,9 @@
 			 HeightRequest="500"
 			 x:Name="this"
 			 BindingContext="{x:Reference this}"
-			 x:DataType="pages:LoginPage">
+			 x:DataType="pages:LoginPage"
+			 xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+             ios:Page.ModalPresentationStyle="FormSheet">
 	<Border>
 		<Border.Shadow>
 			<Shadow Brush="Black"
@@ -16,17 +18,46 @@
                 Radius="5"
                 Opacity="0.3" />
 		</Border.Shadow>
-		<VerticalStackLayout Spacing="10" BackgroundColor="White" Padding="10">
-			<Label Text="Log in to Jira" HorizontalTextAlignment="Center" FontAttributes="Bold"/>
-			<Entry Placeholder="User email" x:Name="UsernameField" />
-			<Editor Placeholder="API token" HeightRequest="100" x:Name="TokenField"/>
-			<Label Text="Manage API tokens" HorizontalTextAlignment="Center" TextColor="DodgerBlue" TextDecorations="Underline">
-				<Label.GestureRecognizers>
-					<TapGestureRecognizer Tapped="ManageAPITokens"/>
-				</Label.GestureRecognizers>
-			</Label>
-			<Button Text="Log in" Clicked="DoLogin"/>
-			<Label Text="Login unsuccessful" TextColor="Red" HorizontalTextAlignment="Center" IsVisible="{Binding ErrorVisible}" />
+		<VerticalStackLayout BackgroundColor="White">
+			<Grid BackgroundColor="WhiteSmoke" HeightRequest="40" Padding="10">
+				<Label Text="Log in to Jira" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontAttributes="Bold" FontFamily=""/>
+				<Button Text="Cancel" 
+						HorizontalOptions="Start" 
+						VerticalOptions="Center" 
+						TextColor="Blue" 
+						BackgroundColor="Transparent"
+						FontFamily="" 
+						Clicked="OnCancel">
+					<VisualStateManager.VisualStateGroups>
+						<VisualStateGroupList>
+							<VisualStateGroup x:Name="CommonStates">
+								<VisualState x:Name="Normal">
+									<VisualState.Setters>
+										<Setter Property="TextColor" Value="Blue" />
+									</VisualState.Setters>
+								</VisualState>
+
+								<VisualState x:Name="Pressed">
+									<VisualState.Setters>
+										<Setter Property="TextColor" Value="AliceBlue" />
+									</VisualState.Setters>
+								</VisualState>
+							</VisualStateGroup>
+						</VisualStateGroupList>
+					</VisualStateManager.VisualStateGroups>
+				</Button>
+			</Grid>		
+			<VerticalStackLayout Spacing="10" Padding="10">					
+				<Entry Placeholder="User email" x:Name="UsernameField" />
+				<Editor Placeholder="API token" HeightRequest="100" x:Name="TokenField"/>
+				<Label Text="Manage API tokens" HorizontalTextAlignment="Center" TextColor="DodgerBlue" TextDecorations="Underline">
+					<Label.GestureRecognizers>
+						<TapGestureRecognizer Tapped="ManageAPITokens"/>
+					</Label.GestureRecognizers>
+				</Label>
+				<Button Text="Log in" Clicked="DoLogin"/>
+				<Label Text="Login unsuccessful" TextColor="Red" HorizontalTextAlignment="Center" IsVisible="{Binding ErrorVisible}" />
+			</VerticalStackLayout>
 		</VerticalStackLayout>
 	</Border>
 </ContentPage>

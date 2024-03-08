@@ -44,4 +44,9 @@ public partial class LoginPage : ContentPage
 			ErrorVisible = true;
 		}		
 	}
+
+	private void OnCancel(object sender, EventArgs e)
+	{
+		Navigation.PopModalAsync();
+	}
 }
