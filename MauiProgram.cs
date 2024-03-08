@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Maui;
+using MauiIcons.FontAwesome;
+using MauiIcons.FontAwesome.Solid;
 using Microsoft.Extensions.Logging;
 
 namespace NWork
@@ -11,6 +13,7 @@ namespace NWork
 			builder
 				.UseMauiApp<App>()
 				.UseMauiCommunityToolkit()
+				.UseFontAwesomeSolidMauiIcons()
 				.ConfigureFonts(fonts =>
 				{
 					fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

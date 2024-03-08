@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
 			 xmlns:weekview="clr-namespace:NWork.WeekView"
+			 xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
              x:Class="NWork.WeekView.WeekView"
 			 x:Name="this">
 	<Grid BindingContext="{Binding ViewModel, Source={x:Reference this}}" x:DataType="weekview:WeekViewModel">
@@ -29,9 +30,9 @@
 						</FormattedString>
 					</Label.FormattedText>
 				</Label>
-				<Button Text="⮜" Clicked="PrevWeek" />
+				<Button Text="&#xf053;" Clicked="PrevWeek" FontFamily="FontAwesome6Free-Solid-900" />
 				<Button Text="Today" Clicked="Today"/>
-				<Button Text="⮞" Clicked="NextWeek"/>
+				<Button Text="&#xf054;" Clicked="NextWeek" FontFamily="FontAwesome6Free-Solid-900" />
 				<ActivityIndicator IsRunning="{Binding ShowSpinner}"/>
 			</HorizontalStackLayout>
 			<HorizontalStackLayout Grid.Column="2" Spacing="10" Padding="10">
