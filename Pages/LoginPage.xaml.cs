@@ -5,7 +5,7 @@ namespace NWork.Pages;
 
 public partial class LoginPage : ContentPage
 {
-	private JiraClient.JiraClient client;
+	private readonly JiraClient.JiraClient client;
 	private bool errorVisible = false;
 
 	public bool ErrorVisible

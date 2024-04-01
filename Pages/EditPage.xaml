@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:pages="clr-namespace:NWork.Pages"
+             xmlns:zoft="http://zoft.MauiExtensions/Controls"
+             x:Class="NWork.Pages.EditPage"
+             Title="Edit"
+             WidthRequest="500"
+             HeightRequest="500"
+             x:Name="this"
+             BindingContext="{x:Reference this}"
+             x:DataType="pages:EditPage"
+             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+             ios:Page.ModalPresentationStyle="FormSheet">
+    <Border>
+        <Border.Shadow>
+            <Shadow Brush="Black"
+            Offset="5,5"
+            Radius="5"
+            Opacity="0.3" />
+        </Border.Shadow>
+        <VerticalStackLayout BackgroundColor="White">
+            <Grid BackgroundColor="WhiteSmoke" HeightRequest="44" Padding="10">
+                <Label Text="Log Work" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontAttributes="Bold" FontFamily=""/>
+                <Button Text="Cancel" 
+			            HorizontalOptions="Start" 
+			            VerticalOptions="Center" 
+			            TextColor="Blue" 
+			            BackgroundColor="Transparent"
+			            Clicked="OnCancel"
+			            BorderWidth="0">        
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroupList>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <VisualState.Setters>
+                                        <Setter Property="TextColor" Value="Blue" />
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Property="TextColor" Value="LightBlue" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateGroupList>
+                    </VisualStateManager.VisualStateGroups>
+                </Button>
+            </Grid>
+            <VerticalStackLayout Spacing="10" Padding="10">
+                <Label Text="Issue key"/>
+                <zoft:AutoCompleteEntry x:Name="IssueSearchBar"
+                                        Placeholder="Issue key"
+                                        ItemsSource="{Binding SearchResults}"
+                                        DisplayMemberPath="FullText"
+                                        TextMemberPath="FullText"
+                                        TextChanged="AutoCompleteEntry_TextChanged"/>
+                <Label Text="Time spent"/>
+                <Entry Placeholder="Time spent"/>
+                <Button Text="Save"/>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </Border>
+</ContentPage>

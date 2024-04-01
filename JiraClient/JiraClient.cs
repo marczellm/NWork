@@ -22,7 +22,7 @@ namespace NWork.JiraClient
 		public Dictionary<string, string> avatarUrls { get; set; } = [];
 	}
 
-	class WorklogResult
+	public class WorklogResult
 	{
 		public uint startAt { get; set; }
 		public uint maxResults { get; set; }
@@ -30,17 +30,34 @@ namespace NWork.JiraClient
 		public IEnumerable<Worklog> worklogs { get; set; } = [];
 	}
 
-	class IssueFields
+	public class IssueFields
 	{
 		public string summary { get; set; } = string.Empty;
 		public WorklogResult? worklog { get; set; }
 	}
 
-	class Issue
+	public class Issue
 	{
 		public string key { get; set; } = string.Empty;
 		public IssueFields? fields { get; set; }
 	}
+
+	public class SuggestedIssue: Issue
+	{
+		public int id = 0;
+		public string summaryText { get; set; } = string.Empty;
+		public string FullText => key + " " + summaryText;
+	}
+
+	class IssuePickerSuggestionSection
+	{
+        public IEnumerable<SuggestedIssue> issues { get; set; } = [];
+    }
+
+	class IssuePickerSuggestions
+	{
+        public IEnumerable<IssuePickerSuggestionSection> sections { get; set; } = [];
+    }
 
 	class SearchResult
 	{
@@ -62,7 +79,7 @@ namespace NWork.JiraClient
 
 	public class JiraClient
 	{
-		private HttpClient client = new()
+		private readonly HttpClient client = new()
 		{
 			BaseAddress = new Uri("https://graphisoft.atlassian.net/rest/api/3/")
 		};
@@ -124,7 +141,6 @@ namespace NWork.JiraClient
 		{
 			var url = $"search?jql=worklogAuthor in (currentUser()) and worklogDate >= '{start:yyyy-MM-dd}' and worklogDate <= '{end:yyyy-MM-dd}'&fields=summary,worklog&maxResults=200";
 			var response = await client.GetAsync(url);
-			var resstr = await response.Content.ReadAsStringAsync();
 			var result = await response.Content.ReadAsAsync<SearchResult>();
 			foreach (var issue in result.issues)
 			{
@@ -143,5 +159,12 @@ namespace NWork.JiraClient
 			var ret = result.issues.SelectMany(issue => issue.fields!.worklog!.worklogs).Where(worklog => worklog.startDate >= start && worklog.endDate <= end);
 			return ret;
 		}
+
+		public async Task<IEnumerable<SuggestedIssue>> GetPickerSuggestions(string query)
+		{
+            var response = await client.GetAsync("issue/picker?query=" + query);
+			var result = await response.Content.ReadAsAsync<IssuePickerSuggestions>();
+			return result.sections.SelectMany(section => section.issues);
+        }
 	}
 }

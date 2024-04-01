@@ -2,6 +2,7 @@
 using MauiIcons.FontAwesome;
 using MauiIcons.FontAwesome.Solid;
 using Microsoft.Extensions.Logging;
+using zoft.MauiExtensions.Controls;
 
 namespace NWork
 {
@@ -13,6 +14,7 @@ namespace NWork
 			builder
 				.UseMauiApp<App>()
 				.UseMauiCommunityToolkit()
+				.UseZoftAutoCompleteEntry()
 				.UseFontAwesomeSolidMauiIcons()
 				.ConfigureFonts(fonts =>
 				{

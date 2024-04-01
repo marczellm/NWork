@@ -47,5 +47,10 @@ namespace NWork.ViewModel
 				ShowSpinner = false;
 			}
 		}
-	}
+
+        public override Task<IEnumerable<SuggestedIssue>> GetPickerSuggestions(string query)
+		{
+			return client.GetPickerSuggestions(query);
+		}
+    }
 }

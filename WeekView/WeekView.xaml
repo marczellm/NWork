@@ -30,19 +30,20 @@
 						</FormattedString>
 					</Label.FormattedText>
 				</Label>
-				<Button Clicked="PrevWeek" Text="{mi:FontAwesomeSolid Icon=ChevronLeft}" HorizontalOptions="Center"/>
+                <Button Clicked="PrevWeek" Text="&#xf053;" HorizontalOptions="Center" FontFamily="FontAwesome6Free-Solid-900.otf"/>
 				<Button Text="Today" Clicked="Today"/>
-				<Button Clicked="NextWeek" Text="{mi:FontAwesomeSolid Icon=ChevronRight}" HorizontalOptions="Center"/>
+                <Button Clicked="NextWeek" Text="&#xf054;" HorizontalOptions="Center" FontFamily="FontAwesome6Free-Solid-900.otf"/>
 				<ActivityIndicator IsRunning="{Binding ShowSpinner}"/>
 			</HorizontalStackLayout>
 			<HorizontalStackLayout Grid.Column="2" Spacing="10" Padding="10">
-				<Label VerticalTextAlignment="Center">
+                <Button Clicked="StartCreatingNewWorklog" Text="+" HorizontalOptions="Center"/>
+                <Label VerticalTextAlignment="Center">
 					<Label.FormattedText>
 						<FormattedString>
 							<FormattedString.Spans>
 								<Span Text="Week: "/>
 								<Span Text="{Binding WeekTotal.TotalHours, StringFormat='{0:N0}h'}"	x:DataType="weekview:WeekViewModel"/>
-								<Span Text="{Binding WeekTotal, StringFormat=' {0:mm}m'}"				x:DataType="weekview:WeekViewModel"/>
+								<Span Text="{Binding WeekTotal, StringFormat=' {0:mm}m'}"			x:DataType="weekview:WeekViewModel"/>
 							</FormattedString.Spans>
 						</FormattedString>
 					</Label.FormattedText>
@@ -77,13 +78,13 @@
 				<ColumnDefinition x:Name="SaturdayColumn"/>
 				<ColumnDefinition x:Name="SundayColumn"/>
 			</Grid.ColumnDefinitions>
-			<Label Grid.Row="0" Grid.Column="1" HorizontalTextAlignment="Center" Text="{Binding Monday, StringFormat='{0:dd ddd}'}"/>
-			<Label Grid.Row="0" Grid.Column="2" HorizontalTextAlignment="Center" Text="{Binding Tuesday, StringFormat='{0:dd ddd}'}"/>
-			<Label Grid.Row="0" Grid.Column="3" HorizontalTextAlignment="Center" Text="{Binding Wednesday, StringFormat='{0:dd ddd}'}"/>
-			<Label Grid.Row="0" Grid.Column="4" HorizontalTextAlignment="Center" Text="{Binding Thursday, StringFormat='{0:dd ddd}'}"/>
-			<Label Grid.Row="0" Grid.Column="5" HorizontalTextAlignment="Center" Text="{Binding Friday, StringFormat='{0:dd ddd}'}"/>
-			<Label Grid.Row="0" Grid.Column="6" HorizontalTextAlignment="Center" Text="{Binding Saturday, StringFormat='{0:dd ddd}'}"/>
-			<Label Grid.Row="0" Grid.Column="7" HorizontalTextAlignment="Center" Text="{Binding Sunday, StringFormat='{0:dd ddd}'}"/>
+			<Label Grid.Row="0" Grid.Column="1" HorizontalTextAlignment="Center" Text="{Binding Monday, StringFormat='{0:dd ddd}'}" FontAttributes="{Binding IsMondayToday}" />
+			<Label Grid.Row="0" Grid.Column="2" HorizontalTextAlignment="Center" Text="{Binding Tuesday, StringFormat='{0:dd ddd}'}" FontAttributes="{Binding IsTuesdayToday}" />
+			<Label Grid.Row="0" Grid.Column="3" HorizontalTextAlignment="Center" Text="{Binding Wednesday, StringFormat='{0:dd ddd}'}" FontAttributes="{Binding IsWednesdayToday}" />
+			<Label Grid.Row="0" Grid.Column="4" HorizontalTextAlignment="Center" Text="{Binding Thursday, StringFormat='{0:dd ddd}'}" FontAttributes="{Binding IsThursdayToday}" />
+			<Label Grid.Row="0" Grid.Column="5" HorizontalTextAlignment="Center" Text="{Binding Friday, StringFormat='{0:dd ddd}'}" FontAttributes="{Binding IsFridayToday}" />
+			<Label Grid.Row="0" Grid.Column="6" HorizontalTextAlignment="Center" Text="{Binding Saturday, StringFormat='{0:dd ddd}'}" FontAttributes="{Binding IsSaturdayToday}" />
+			<Label Grid.Row="0" Grid.Column="7" HorizontalTextAlignment="Center" Text="{Binding Sunday, StringFormat='{0:dd ddd}'}" FontAttributes="{Binding IsSundayToday}" />
 			<Label Grid.Column="0" Grid.Row="1" HorizontalTextAlignment="Center">07:00</Label>
 			<Label Grid.Column="0" Grid.Row="2" HorizontalTextAlignment="Center">08:00</Label>
 			<Label Grid.Column="0" Grid.Row="3" HorizontalTextAlignment="Center">09:00</Label>
@@ -106,8 +107,16 @@
 			<Label Grid.Row="14" Grid.Column="7" HorizontalTextAlignment="Center" Text="{Binding SundayTotal, StringFormat='{0:hh\\:mm}'}"/>
 		</Grid>
 		
-		<Grid Grid.Row="1" x:Name="EventsGrid" BackgroundColor="Transparent" ZIndex="20"
+		<Grid Grid.Row="1" 
+              x:Name="EventsGrid" 
+              BackgroundColor="Transparent" 
+              ZIndex="20"
 			  BindableLayout.ItemsSource="{Binding Events}">
+            <Grid.GestureRecognizers>
+                <PointerGestureRecognizer PointerPressed="PointerGestureRecognizer_PointerPressed"
+                                          PointerMoved="PointerGestureRecognizer_PointerMoved"
+                                          PointerReleased="PointerGestureRecognizer_PointerReleased"/>
+            </Grid.GestureRecognizers>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="20"/>
 				<RowDefinition/>
@@ -188,6 +197,12 @@
 								<RowDefinition/>
 								<RowDefinition Height="Auto"/>
 							</Grid.RowDefinitions>
+                            <FlyoutBase.ContextFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Text="Edit" Clicked="StartEditingWorklog"/>
+                                    <MenuFlyoutItem Text="Delete" Clicked="DeleteWorklog"/>
+                                </MenuFlyout>
+                            </FlyoutBase.ContextFlyout>
 							<Label Grid.Row="0" Text="{Binding Description}"/>
 							<Label Grid.Row="2" Text="{Binding Title}" TextColor="DodgerBlue">
 								<Label.GestureRecognizers>

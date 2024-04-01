@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NWork.JiraClient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -76,7 +77,15 @@ namespace NWork.WeekView
 				RaisePropertyChanged(nameof(Friday));
 				RaisePropertyChanged(nameof(Saturday));
 				RaisePropertyChanged(nameof(Sunday));
-			}
+
+				RaisePropertyChanged(nameof(IsMondayToday));
+                RaisePropertyChanged(nameof(IsTuesdayToday));
+                RaisePropertyChanged(nameof(IsWednesdayToday));
+                RaisePropertyChanged(nameof(IsThursdayToday));
+                RaisePropertyChanged(nameof(IsFridayToday));
+                RaisePropertyChanged(nameof(IsSaturdayToday));
+                RaisePropertyChanged(nameof(IsSundayToday));
+            }
 		}
 		public DateTime Tuesday { get {  return Monday + TimeSpan.FromDays(1); } }
 		public DateTime Wednesday { get { return Monday + TimeSpan.FromDays(2); } }
@@ -198,10 +207,31 @@ namespace NWork.WeekView
 			Monday = DateTime.UtcNow.AddDays(-1 * diff).Date;
 		}
 
-		public event PropertyChangedEventHandler? PropertyChanged;
+		public FontAttributes IsMondayToday => IsToday(Monday);
+		public FontAttributes IsTuesdayToday => IsToday(Tuesday);
+		public FontAttributes IsWednesdayToday => IsToday(Wednesday);
+		public FontAttributes IsThursdayToday => IsToday(Thursday);
+		public FontAttributes IsFridayToday => IsToday(Friday);
+		public FontAttributes IsSaturdayToday => IsToday(Saturday);
+		public FontAttributes IsSundayToday => IsToday(Sunday);
+
+        private static FontAttributes IsToday(DateTime date)
+        {
+            var ret = new FontAttributes();
+            if (date == DateTime.Today)
+            {
+                ret = FontAttributes.Bold;
+            }
+            return ret;
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 		protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
-	}
+
+		public abstract Task<IEnumerable<SuggestedIssue>> GetPickerSuggestions(string query);
+
+    }
 }
