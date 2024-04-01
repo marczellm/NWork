@@ -46,6 +46,13 @@
 							<Setter Property="BackgroundColor" Value="Gainsboro" />
 						</VisualState.Setters>
 					</VisualState>
+
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="WhiteSmoke" />
+                            <Setter Property="TextColor" Value="DarkGray" />
+                        </VisualState.Setters>
+                    </VisualState>
 				</VisualStateGroup>
 			</VisualStateGroupList>
 		</Setter>

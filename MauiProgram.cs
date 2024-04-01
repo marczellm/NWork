@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Maui;
-using MauiIcons.FontAwesome;
 using MauiIcons.FontAwesome.Solid;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Handlers;
 using zoft.MauiExtensions.Controls;
 
 namespace NWork
@@ -25,8 +25,17 @@ namespace NWork
 #if DEBUG
 			builder.Logging.AddDebug();
 #endif
+#if WINDOWS
+            // use the correct first day of the week
+            DatePickerHandler.Mapper.AppendToMapping("FixFirstDayOfWeek", (handler, view) =>
+            {
+                handler.PlatformView.FirstDayOfWeek = (Windows.Globalization.DayOfWeek)(int)
+                    System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
+            });
+#endif
 
-			return builder.Build();
+
+            return builder.Build();
 		}
 	}
 }

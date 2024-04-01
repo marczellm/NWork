@@ -1,6 +1,3 @@
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
 namespace NWork.Pages;
 
 public partial class LoginPage : ContentPage

@@ -53,12 +53,22 @@
                 <zoft:AutoCompleteEntry x:Name="IssueSearchBar"
                                         Placeholder="Issue key"
                                         ItemsSource="{Binding SearchResults}"
+                                        SelectedSuggestion="{Binding SelectedIssue}"
                                         DisplayMemberPath="FullText"
                                         TextMemberPath="FullText"
                                         TextChanged="AutoCompleteEntry_TextChanged"/>
+                <Label Text="Date started"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <DatePicker Format="yyyy-mm-dd"/>
+                    <TimePicker Format="H:mm" Margin="115,14,0,0" Grid.Column="1"/>
+                </Grid>
                 <Label Text="Time spent"/>
                 <Entry Placeholder="Time spent"/>
-                <Button Text="Save"/>
+                <Button Text="Save" Clicked="Save" IsEnabled="{Binding SaveEnabled}"/>
             </VerticalStackLayout>
         </VerticalStackLayout>
     </Border>

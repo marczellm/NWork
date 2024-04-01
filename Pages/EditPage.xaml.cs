@@ -8,9 +8,23 @@ namespace NWork.Pages;
 public partial class EditPage : ContentPage
 {
     public ObservableCollection<SuggestedIssue> SearchResults { get; set; } = [];
-    private readonly WeekViewModel viewModel;
 
-	public EditPage(WeekViewModel weekViewModel)
+    public SuggestedIssue? SelectedIssue
+    {
+        get => selectedIssue; 
+        set
+        {
+            selectedIssue = value;
+            OnPropertyChanged(nameof(SaveEnabled));
+        }
+    }
+
+    public bool SaveEnabled => SelectedIssue != null;
+
+    private readonly WeekViewModel viewModel;
+    private SuggestedIssue? selectedIssue = null;
+
+    public EditPage(WeekViewModel weekViewModel)
 	{
         this.viewModel = weekViewModel;
 		InitializeComponent();
@@ -24,6 +38,16 @@ public partial class EditPage : ContentPage
     private async void AutoCompleteEntry_TextChanged(object sender, zoft.MauiExtensions.Controls.AutoCompleteEntryTextChangedEventArgs e)
     {
         SearchResults.Clear();
+        if (IssueSearchBar.Text.IsNullOrEmpty()) 
+        {
+            SelectedIssue = null;
+            return;
+        }
         SearchResults.AddRange(await viewModel.GetPickerSuggestions(IssueSearchBar.Text));
+    }
+
+    private void Save(object sender, EventArgs e)
+    {
+
     }
 }

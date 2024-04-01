@@ -1,12 +1,5 @@
-﻿using NWork.JiraClient;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using NWork.JiraClient;
 
 namespace NWork.WeekView
 {
@@ -58,10 +51,13 @@ namespace NWork.WeekView
 		}
 	}
 
-	public abstract class WeekViewModel: INotifyPropertyChanged
+	public abstract partial class WeekViewModel: ObservableObject
 	{
 		private DateTime startDate;
+
+		[ObservableProperty]
 		private bool showSpinner = false;
+
 		private IEnumerable<Event> events = [];
 
 		public DateTime Monday
@@ -70,21 +66,20 @@ namespace NWork.WeekView
 			set
 			{
 				startDate = value;
-				RaisePropertyChanged();
-				RaisePropertyChanged(nameof(Tuesday));
-				RaisePropertyChanged(nameof(Wednesday));
-				RaisePropertyChanged(nameof(Thursday));
-				RaisePropertyChanged(nameof(Friday));
-				RaisePropertyChanged(nameof(Saturday));
-				RaisePropertyChanged(nameof(Sunday));
-
-				RaisePropertyChanged(nameof(IsMondayToday));
-                RaisePropertyChanged(nameof(IsTuesdayToday));
-                RaisePropertyChanged(nameof(IsWednesdayToday));
-                RaisePropertyChanged(nameof(IsThursdayToday));
-                RaisePropertyChanged(nameof(IsFridayToday));
-                RaisePropertyChanged(nameof(IsSaturdayToday));
-                RaisePropertyChanged(nameof(IsSundayToday));
+				OnPropertyChanged();
+				OnPropertyChanged(nameof(Tuesday));
+				OnPropertyChanged(nameof(Wednesday));
+				OnPropertyChanged(nameof(Thursday));
+				OnPropertyChanged(nameof(Friday));
+				OnPropertyChanged(nameof(Saturday));
+				OnPropertyChanged(nameof(Sunday));
+				OnPropertyChanged(nameof(IsMondayToday));
+                OnPropertyChanged(nameof(IsTuesdayToday));
+                OnPropertyChanged(nameof(IsWednesdayToday));
+                OnPropertyChanged(nameof(IsThursdayToday));
+                OnPropertyChanged(nameof(IsFridayToday));
+                OnPropertyChanged(nameof(IsSaturdayToday));
+                OnPropertyChanged(nameof(IsSundayToday));
             }
 		}
 		public DateTime Tuesday { get {  return Monday + TimeSpan.FromDays(1); } }
@@ -164,25 +159,15 @@ namespace NWork.WeekView
 			set
 			{
 				events = value;
-				RaisePropertyChanged();
-				RaisePropertyChanged(nameof(MondayTotal));
-				RaisePropertyChanged(nameof(TuesdayTotal));
-				RaisePropertyChanged(nameof(WednesdayTotal));
-				RaisePropertyChanged(nameof(ThursdayTotal));
-				RaisePropertyChanged(nameof(FridayTotal));
-				RaisePropertyChanged(nameof(Saturday));
-				RaisePropertyChanged(nameof(SundayTotal));
-				RaisePropertyChanged(nameof(WeekTotal));
-			}
-		}
-
-		public bool ShowSpinner
-		{
-			get => showSpinner; 
-			set
-			{
-				showSpinner = value;
-				RaisePropertyChanged();
+				OnPropertyChanged();
+				OnPropertyChanged(nameof(MondayTotal));
+				OnPropertyChanged(nameof(TuesdayTotal));
+				OnPropertyChanged(nameof(WednesdayTotal));
+				OnPropertyChanged(nameof(ThursdayTotal));
+				OnPropertyChanged(nameof(FridayTotal));
+				OnPropertyChanged(nameof(Saturday));
+				OnPropertyChanged(nameof(SundayTotal));
+				OnPropertyChanged(nameof(WeekTotal));
 			}
 		}
 
@@ -224,12 +209,6 @@ namespace NWork.WeekView
             }
             return ret;
         }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-		protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
 
 		public abstract Task<IEnumerable<SuggestedIssue>> GetPickerSuggestions(string query);
 
