@@ -47,6 +47,14 @@
 						<Button Clicked="NextWeek" Text="{mi:FontAwesomeSolid Icon=ChevronRight}" HorizontalOptions="Center"/>
 					</On>
 				</OnPlatform>
+				<OnPlatform x:TypeArguments="Button">
+					<On Platform="WinUI">
+						<Button Clicked="RefreshCurrentView" Text="&#xf021;" HorizontalOptions="Center" FontFamily="FontAwesome6Free-Solid-900.otf"/>
+					</On>
+					<On Platform="MacCatalyst">
+						<Button Clicked="RefreshCurrentView" Text="{mi:FontAwesomeSolid Icon=ArrowsRotate}" HorizontalOptions="Center"/>
+					</On>
+				</OnPlatform>
 				<ActivityIndicator IsRunning="{Binding ShowSpinner}"/>
 			</HorizontalStackLayout>
 			<HorizontalStackLayout Grid.Column="2" Spacing="10" Padding="10">

@@ -1,14 +1,9 @@
 ﻿using NWork.JiraClient;
 using NWork.WeekView;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NWork.ViewModel
 {
-	public class WeekViewModelImpl: WeekViewModel
+	public class WeekViewModelImpl: WeekViewModel, IPickerProvider
 	{
 		private readonly JiraClient.JiraClient client;
 		public WeekViewModelImpl(JiraClient.JiraClient client)
@@ -48,9 +43,14 @@ namespace NWork.ViewModel
 			}
 		}
 
-        public override Task<IEnumerable<SuggestedIssue>> GetPickerSuggestions(string query)
+        Task<IEnumerable<SuggestedIssue>> IPickerProvider.GetPickerSuggestions(string query)
 		{
 			return client.GetPickerSuggestions(query);
 		}
-    }
+
+		public override IPickerProvider GetPickerProvider()
+		{
+			return this;
+		}
+	}
 }

@@ -8,11 +8,10 @@
              WidthRequest="500"
              HeightRequest="500"
              x:Name="this"
-             BindingContext="{x:Reference this}"
              x:DataType="pages:EditPage"
              xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
              ios:Page.ModalPresentationStyle="FormSheet">
-    <Border>
+	<Border BindingContext="{Binding ViewModel, Source={x:Reference this}}" x:DataType="pages:EditPageViewModel">
         <Border.Shadow>
             <Shadow Brush="Black"
             Offset="5,5"
@@ -67,13 +66,15 @@
                     <Border StrokeThickness="{OnPlatform WinUI=0.0}">
                         <DatePicker Format="yyyy-mm-dd"/>
                     </Border>
-                    <Border StrokeThickness="{OnPlatform WinUI=0.0}" Grid.Column="1" Margin="{OnPlatform WinUI=115,14,0,0}">
+                    <Border StrokeThickness="{OnPlatform WinUI=0.0}" Grid.Column="1" Margin="{OnPlatform WinUI='115,14,0,0'}">
                         <TimePicker Format="H:mm"/>
                     </Border>
                 </Grid>
                 <Label Text="Time spent"/>
-                <Entry Placeholder="Time spent"/>
-                <Button Text="Save" Clicked="Save" IsEnabled="{Binding SaveEnabled}"/>
+				<Border Stroke="{Binding InvalidTimespan}">
+                    <Entry Placeholder="Time spent" TextChanged="TimeSpent_TextChanged"/>
+				</Border>
+				<Button Text="Save" Clicked="Save" IsEnabled="{Binding SaveEnabled}"/>
             </VerticalStackLayout>
         </VerticalStackLayout>
     </Border>

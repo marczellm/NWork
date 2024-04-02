@@ -51,6 +51,11 @@ namespace NWork.WeekView
 		}
 	}
 
+	public interface IPickerProvider
+	{
+		Task<IEnumerable<SuggestedIssue>> GetPickerSuggestions(string query);
+	}
+
 	public abstract partial class WeekViewModel: ObservableObject
 	{
 		private DateTime startDate;
@@ -210,7 +215,6 @@ namespace NWork.WeekView
             return ret;
         }
 
-		public abstract Task<IEnumerable<SuggestedIssue>> GetPickerSuggestions(string query);
-
+		public abstract IPickerProvider GetPickerProvider();
     }
 }

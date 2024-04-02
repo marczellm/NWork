@@ -92,16 +92,21 @@ public partial class WeekView : ContentView
 
     private async void StartCreatingNewWorklog(object sender, EventArgs e)
     {
-        await Navigation.PushModalAsync(new EditPage(ViewModel));
+        await Navigation.PushModalAsync(new EditPage(new EditPageViewModel(ViewModel.GetPickerProvider())));
     }
 
     private async void StartEditingWorklog(object sender, EventArgs e)
     {
-        await Navigation.PushModalAsync(new EditPage(ViewModel));
+        await Navigation.PushModalAsync(new EditPage(new EditPageViewModel(ViewModel.GetPickerProvider())));
     }
 
 	private async void DeleteWorklog(object sender, EventArgs e)
 	{
 		await Shell.Current.DisplayAlert("Delete worklog", "Are you sure?", "OK", "Cancel");
+	}
+
+	private void RefreshCurrentView(object sender, EventArgs e)
+	{
+		
 	}
 }
