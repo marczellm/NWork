@@ -97,7 +97,12 @@ public partial class WeekView : ContentView
 
     private async void StartEditingWorklog(object sender, EventArgs e)
     {
-        await Navigation.PushModalAsync(new EditPage(new EditPageViewModel(ViewModel.GetPickerProvider())));
+		Event ev = (Event)((BindableObject) sender).BindingContext;
+        await Navigation.PushModalAsync(new EditPage(new EditPageViewModel(ViewModel.GetPickerProvider(), new JiraClient.SuggestedIssue()
+		{
+			summaryText = ev.Description,
+			key = ev.Title
+		}, ev.Id, ev.Started, ev.Duration)));
     }
 
 	private async void DeleteWorklog(object sender, EventArgs e)

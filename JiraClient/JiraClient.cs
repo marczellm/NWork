@@ -36,7 +36,7 @@ namespace NWork.JiraClient
 
 	public class SuggestedIssue: Issue
 	{
-		public int id = 0;
+		public string id {  get; set; }	= string.Empty;
 		public string summaryText { get; set; } = string.Empty;
 		public string FullText => key + " " + summaryText;
 	}
@@ -59,6 +59,7 @@ namespace NWork.JiraClient
 	public class Worklog
 	{
 		public User? author { get; set; }
+		public string id { get; set; } = string.Empty;
 		public string issueId { get; set; } = string.Empty;
 		public string started { get; set; } = string.Empty;
 		public int timeSpentSeconds { get; set; }

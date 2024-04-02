@@ -34,6 +34,7 @@ namespace NWork.ViewModel
 				var worklogs = await client.GetWorklogsBetween(Monday, Sunday + TimeSpan.FromHours(23));
 				Events = worklogs.Select(worklog => new Event()
 				{
+					Id = worklog.id,
 					Title = worklog.issueKey,
 					Started = DateTime.Parse(worklog.started),
 					Duration = TimeSpan.FromSeconds(worklog.timeSpentSeconds),

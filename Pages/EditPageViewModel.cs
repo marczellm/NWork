@@ -19,6 +19,14 @@ namespace NWork.Pages
 			this.client = client;
 		}
 
+		public EditPageViewModel(IPickerProvider client, SuggestedIssue issue, string worklogId, DateTime started, TimeSpan timeSpent)
+		{
+			this.client = client;
+			SelectedIssue = issue;
+			dateTime = started;
+			EnteredTimespan = timeSpent;
+		}
+
 		public ObservableCollection<SuggestedIssue> SearchResults { get; } = [];
 		public SuggestedIssue? SelectedIssue
 		{
@@ -27,6 +35,24 @@ namespace NWork.Pages
 			{
 				selectedIssue = value;
 				OnPropertyChanged(nameof(SaveEnabled));
+			}
+		}
+
+		public TimeSpan Time
+		{
+			get => dateTime.TimeOfDay;
+			set
+			{
+				dateTime = dateTime.Date + value;
+			}
+		}
+
+		public DateTime Date
+		{
+			get => dateTime;
+			set
+			{
+				dateTime = value + Time;
 			}
 		}
 
@@ -49,6 +75,7 @@ namespace NWork.Pages
 
 		private SuggestedIssue? selectedIssue = null;
 		private TimeSpan? enteredTimespan = TimeSpan.Zero;
+		private DateTime dateTime;
 
 		public Task<IEnumerable<SuggestedIssue>> GetPickerSuggestions(string query)
 		{

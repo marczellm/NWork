@@ -64,15 +64,15 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Border StrokeThickness="{OnPlatform WinUI=0.0}">
-                        <DatePicker Format="yyyy-mm-dd"/>
+                        <DatePicker Format="yyyy-mm-dd" Date="{Binding Date}"/>
                     </Border>
                     <Border StrokeThickness="{OnPlatform WinUI=0.0}" Grid.Column="1" Margin="{OnPlatform WinUI='115,14,0,0'}">
-                        <TimePicker Format="H:mm"/>
+                        <TimePicker Format="H:mm" Time="{Binding Time}"/>
                     </Border>
                 </Grid>
                 <Label Text="Time spent"/>
 				<Border Stroke="{Binding InvalidTimespan}">
-                    <Entry Placeholder="Time spent" TextChanged="TimeSpent_TextChanged"/>
+                    <Entry Placeholder="Time spent" TextChanged="TimeSpent_TextChanged" Text="{Binding EnteredTimespan, Mode=OneWay}"/>
 				</Border>
 				<Button Text="Save" Clicked="Save" IsEnabled="{Binding SaveEnabled}"/>
             </VerticalStackLayout>
