@@ -59,7 +59,7 @@
                                         TextChanged="AutoCompleteEntry_TextChanged"
                                         FontSize="{OnPlatform MacCatalyst=14}"/>
                 <Label Text="Date started"/>
-                <Grid>
+                <Grid ColumnSpacing="{OnPlatform MacCatalyst=10}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
@@ -67,7 +67,7 @@
                     <Border StrokeThickness="{OnPlatform WinUI=0.0}">
                         <DatePicker Format="yyyy-mm-dd"/>
                     </Border>
-                    <Border StrokeThickness="{OnPlatform WinUI=0.0}" Grid.Column="1"  Margin="115,14,0,0">
+                    <Border StrokeThickness="{OnPlatform WinUI=0.0}" Grid.Column="1" Margin="{OnPlatform WinUI=115,14,0,0}">
                         <TimePicker Format="H:mm"/>
                     </Border>
                 </Grid>
