@@ -32,27 +32,27 @@
 				</Label>
 				<OnPlatform x:TypeArguments="Button">
 					<On Platform="WinUI">
-						<Button Clicked="PrevWeek" Text="&#xf053;" HorizontalOptions="Center" FontFamily="FontAwesome6Free-Solid-900.otf"/>				
+						<Button Clicked="PrevWeek" HorizontalOptions="Center" Text="&#xf053;" FontFamily="FontAwesome6Free-Solid-900.otf"/>				
 					</On>
 					<On Platform="MacCatalyst">
-						<Button Clicked="PrevWeek" Text="{mi:FontAwesomeSolid Icon=ChevronLeft}" HorizontalOptions="Center"/>
+						<Button Clicked="PrevWeek" HorizontalOptions="Center" Text="{mi:FontAwesomeSolid Icon=ChevronLeft}"/>
 					</On>
-				</OnPlatform>               
+				</OnPlatform>
 				<Button Text="Today" Clicked="Today"/>
 				<OnPlatform x:TypeArguments="Button">
 					<On Platform="WinUI">
-						<Button Clicked="NextWeek" Text="&#xf054;" HorizontalOptions="Center" FontFamily="FontAwesome6Free-Solid-900.otf"/>				
+						<Button Clicked="NextWeek" HorizontalOptions="Center" Text="&#xf054;" FontFamily="FontAwesome6Free-Solid-900.otf"/>
 					</On>
 					<On Platform="MacCatalyst">
-						<Button Clicked="NextWeek" Text="{mi:FontAwesomeSolid Icon=ChevronRight}" HorizontalOptions="Center"/>
+						<Button Clicked="NextWeek" HorizontalOptions="Center" Text="{mi:FontAwesomeSolid Icon=ChevronRight}" />
 					</On>
 				</OnPlatform>
 				<OnPlatform x:TypeArguments="Button">
 					<On Platform="WinUI">
-						<Button Clicked="RefreshCurrentView" Text="&#xf021;" HorizontalOptions="Center" FontFamily="FontAwesome6Free-Solid-900.otf"/>
+						<Button Clicked="RefreshCurrentView" HorizontalOptions="Center" Text="&#xf021;" FontFamily="FontAwesome6Free-Solid-900.otf"/>
 					</On>
 					<On Platform="MacCatalyst">
-						<Button Clicked="RefreshCurrentView" Text="{mi:FontAwesomeSolid Icon=ArrowsRotate}" HorizontalOptions="Center"/>
+						<Button Clicked="RefreshCurrentView" HorizontalOptions="Center" Text="{mi:FontAwesomeSolid Icon=ArrowsRotate}"/>
 					</On>
 				</OnPlatform>
 				<ActivityIndicator IsRunning="{Binding ShowSpinner}"/>
