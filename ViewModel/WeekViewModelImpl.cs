@@ -25,24 +25,29 @@ namespace NWork.ViewModel
 		}
 
 
-		private async void WeekViewModelImpl_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+		private void WeekViewModelImpl_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(Monday))
-			{
-				ShowSpinner = true;
-				Events = [];
-				var worklogs = await client.GetWorklogsBetween(Monday, Sunday + TimeSpan.FromHours(23));
-				Events = worklogs.Select(worklog => new Event()
-				{
-					Id = worklog.id,
-					Title = worklog.issueKey,
-					Started = DateTime.Parse(worklog.started),
-					Duration = TimeSpan.FromSeconds(worklog.timeSpentSeconds),
-					Description = worklog.issueTitle
-				});
-				ShowSpinner = false;
+            {
+                Events = [];
+                RefreshCurrentView();
 			}
 		}
+
+		public async override void RefreshCurrentView ()
+		{
+            ShowSpinner = true;
+            var worklogs = await client.GetWorklogsBetween(Monday, Sunday + TimeSpan.FromHours(23));
+            Events = worklogs.Select(worklog => new Event()
+            {
+                Id = worklog.id,
+                Title = worklog.issueKey,
+                Started = DateTime.Parse(worklog.started),
+                Duration = TimeSpan.FromSeconds(worklog.timeSpentSeconds),
+                Description = worklog.issueTitle
+            });
+            ShowSpinner = false;
+        }
 
         Task<IEnumerable<SuggestedIssue>> IPickerProvider.GetPickerSuggestions(string query)
 		{
@@ -54,14 +59,29 @@ namespace NWork.ViewModel
 			return this;
 		}
 
-		public async Task AddWorklog(Worklog worklog)
+		public async Task<bool> AddWorklog(Worklog worklog)
 		{
-			await client.AddWorklog(worklog);
+			var ret = await client.AddWorklog(worklog);
+			if (ret)
+			{
+				RefreshCurrentView();
+			}
+			return ret;
 		}
 
-		public async Task EditWorklog(Worklog worklog)
+		public async Task<bool> EditWorklog(Worklog worklog)
 		{
-			await client.EditWorklog(worklog);
+			return await client.EditWorklog(worklog);
 		}
-	}
+
+        public override async Task<bool> DeleteWorklog(Worklog worklog)
+        {
+            var ret = await client.DeleteWorklog(worklog);
+			if (ret)
+			{
+				RefreshCurrentView();
+			}
+			return ret;
+        }
+    }
 }

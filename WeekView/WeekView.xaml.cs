@@ -107,11 +107,15 @@ public partial class WeekView : ContentView
 
 	private async void DeleteWorklog(object sender, EventArgs e)
 	{
-		await Shell.Current.DisplayAlert("Delete worklog", "Are you sure?", "OK", "Cancel");
+		if (await Shell.Current.DisplayAlert("Delete worklog", "Are you sure?", "OK", "Cancel"))
+		{
+            Event ev = (Event)((BindableObject)sender).BindingContext;
+			await ViewModel.DeleteWorklog(new JiraClient.Worklog { id = ev.Id, issueKey = ev.Title });
+		}
 	}
 
 	private void RefreshCurrentView(object sender, EventArgs e)
 	{
-		
+		ViewModel.RefreshCurrentView();
 	}
 }

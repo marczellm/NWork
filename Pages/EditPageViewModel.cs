@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using NWork.JiraClient;
 using NWork.WeekView;
+using System;
 using System.Collections.ObjectModel;
 
 namespace NWork.Pages
@@ -17,20 +18,23 @@ namespace NWork.Pages
             saveCommand = new Command(async () => {
                 if (IsEditMode)
                 {
-                    await client.EditWorklog(new()
+                    bool success = await client.EditWorklog(new()
                     {
 
                     });
                 }
                 else
                 {
-                    await client.AddWorklog(new()
+                    bool success = await client.AddWorklog(new()
                     {
                         issueId = SelectedIssue!.id,
-                        started = dateTime.ToUniversalTime().ToString("u").Replace(" ", "T"),
-                        timeSpentSeconds = EnteredTimespan?.Seconds ?? 0,
+                        started = dateTime.ToString("yyyy-MM-dd'T'HH:mm:ss.fff") + dateTime.ToString("zzzz").Replace(":", ""),
+						timeSpentSeconds = (int) (EnteredTimespan?.TotalSeconds ?? 0),
                     });
-                    SaveFinished?.Invoke();
+					if (success)
+					{
+                        SaveFinished?.Invoke();
+                    }
                 }
             }, () => {
                 return SelectedIssue != null && EnteredTimespan != null;

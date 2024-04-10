@@ -186,17 +186,23 @@ namespace NWork.JiraClient
 			return ret;
         }
 
-		public async Task AddWorklog(Worklog worklog)
+		public async Task<bool> AddWorklog(Worklog worklog)
 		{
 			string issueIdOrKey = ! worklog.issueId.IsNullOrEmpty () ? worklog.issueId : worklog.issueKey;
 			var response = await client.PostAsJsonAsync($"issue/{issueIdOrKey}/worklog", worklog);
-			var resstr = await response.Content.ReadAsStringAsync();
-            await Console.Out.WriteLineAsync(resstr);
+			return response.IsSuccessStatusCode;
         }
 
-		public async Task EditWorklog(Worklog worklog)
+		public async Task<bool> EditWorklog(Worklog worklog)
 		{
-			
+			return false;
+		}
+
+		public async Task<bool> DeleteWorklog(Worklog worklog)
+		{
+            string issueIdOrKey = !worklog.issueId.IsNullOrEmpty() ? worklog.issueId : worklog.issueKey;
+            var response = await client.DeleteAsync($"issue/{issueIdOrKey}/worklog/{worklog.id}");
+			return response.IsSuccessStatusCode;
 		}
 	}
 }
