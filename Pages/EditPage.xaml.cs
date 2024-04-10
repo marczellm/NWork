@@ -29,7 +29,8 @@ public partial class EditPage : ContentPage
 			ViewModel.SelectedIssue = null;
             return;
         }
-		ViewModel.SearchResults.AddRange(await ViewModel.GetPickerSuggestions(IssueSearchBar.Text));
+        var results = await ViewModel.GetPickerSuggestions(IssueSearchBar.Text);
+        ViewModel.SearchResults.AddRange(results);
 #if MACCATALYST
         IssueSearchBar.IsSuggestionListOpen = ViewModel.SearchResults.Count > 0;
 #endif

@@ -13,16 +13,37 @@ namespace NWork.Pages
 		public EditPageViewModel()
 		{
 			client = null!;
-		}
 
-		public EditPageViewModel(IPickerProvider client)
+            saveCommand = new Command(async () => {
+                if (IsEditMode)
+                {
+                    await client.EditWorklog(new()
+                    {
+
+                    });
+                }
+                else
+                {
+                    await client.AddWorklog(new()
+                    {
+                        issueId = SelectedIssue!.id,
+                        started = dateTime.ToUniversalTime().ToString("u").Replace(" ", "T"),
+                        timeSpentSeconds = EnteredTimespan?.Seconds ?? 0,
+                    });
+                    SaveFinished?.Invoke();
+                }
+            }, () => {
+                return SelectedIssue != null && EnteredTimespan != null;
+            });
+        }
+
+		public EditPageViewModel(IPickerProvider client): this()
 		{
 			this.client = client;
 		}
 
-		public EditPageViewModel(IPickerProvider client, SuggestedIssue issue, string worklogId, DateTime started, TimeSpan timeSpent)
-		{
-			this.client = client;
+		public EditPageViewModel(IPickerProvider client, SuggestedIssue issue, string worklogId, DateTime started, TimeSpan timeSpent) : this(client)
+        {
 			this.worklogId = worklogId;
 			SelectedIssue = issue;
 			dateTime = started;
@@ -78,7 +99,7 @@ namespace NWork.Pages
 
 		private SuggestedIssue? selectedIssue = null;
 		private TimeSpan? enteredTimespan = TimeSpan.Zero;
-		private DateTime dateTime;
+		private DateTime dateTime = DateTime.Now;
 
 		public Task<IEnumerable<SuggestedIssue>> GetPickerSuggestions(string query)
 		{
@@ -88,26 +109,7 @@ namespace NWork.Pages
 		public delegate void SaveFinishedEvent();
 		public event SaveFinishedEvent? SaveFinished;
 
-		public Command SaveCommand => new Command(async () => {
-			if (IsEditMode)
-			{
-				await client.EditWorklog(new()
-				{
-
-				});
-			} 
-			else
-			{
-				await client.AddWorklog(new()
-				{
-					issueId = SelectedIssue!.id,
-					started = dateTime.ToString("s", System.Globalization.CultureInfo.InvariantCulture),
-					timeSpentSeconds = EnteredTimespan?.Seconds ?? 0,
-				});
-				SaveFinished?.Invoke();
-			}
-		}, () => {
-			return SelectedIssue != null && EnteredTimespan != null;
-		});
+		private readonly Command saveCommand;
+		public Command SaveCommand => saveCommand;
 	}
 }
