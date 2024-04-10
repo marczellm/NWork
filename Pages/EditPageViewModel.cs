@@ -8,6 +8,7 @@ namespace NWork.Pages
 	public class EditPageViewModel : ObservableObject
 	{
 		private readonly IPickerProvider client;
+		private readonly string? worklogId = null;
 
 		public EditPageViewModel()
 		{
@@ -22,6 +23,7 @@ namespace NWork.Pages
 		public EditPageViewModel(IPickerProvider client, SuggestedIssue issue, string worklogId, DateTime started, TimeSpan timeSpent)
 		{
 			this.client = client;
+			this.worklogId = worklogId;
 			SelectedIssue = issue;
 			dateTime = started;
 			EnteredTimespan = timeSpent;
@@ -34,7 +36,7 @@ namespace NWork.Pages
 			set
 			{
 				selectedIssue = value;
-				OnPropertyChanged(nameof(SaveEnabled));
+				SaveCommand.ChangeCanExecute();
 			}
 		}
 
@@ -63,6 +65,7 @@ namespace NWork.Pages
 			{
 				enteredTimespan = value;
 				OnPropertyChanged(nameof(InvalidTimespan));
+				SaveCommand.ChangeCanExecute();
 			}
 		}
 
@@ -71,7 +74,7 @@ namespace NWork.Pages
 			get => EnteredTimespan == null ? Brush.Red : Brush.Transparent;
 		}
 
-		public bool SaveEnabled => SelectedIssue != null;
+		public bool IsEditMode => worklogId != null; // otherwise new worklog creating mode
 
 		private SuggestedIssue? selectedIssue = null;
 		private TimeSpan? enteredTimespan = TimeSpan.Zero;
@@ -81,5 +84,30 @@ namespace NWork.Pages
 		{
 			return client.GetPickerSuggestions(query);
 		}
+
+		public delegate void SaveFinishedEvent();
+		public event SaveFinishedEvent? SaveFinished;
+
+		public Command SaveCommand => new Command(async () => {
+			if (IsEditMode)
+			{
+				await client.EditWorklog(new()
+				{
+
+				});
+			} 
+			else
+			{
+				await client.AddWorklog(new()
+				{
+					issueId = SelectedIssue!.id,
+					started = dateTime.ToString("s", System.Globalization.CultureInfo.InvariantCulture),
+					timeSpentSeconds = EnteredTimespan?.Seconds ?? 0,
+				});
+				SaveFinished?.Invoke();
+			}
+		}, () => {
+			return SelectedIssue != null && EnteredTimespan != null;
+		});
 	}
 }

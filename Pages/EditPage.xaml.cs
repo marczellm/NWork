@@ -7,8 +7,12 @@ public partial class EditPage : ContentPage
     public EditPageViewModel ViewModel {  get; private set; }
 
     public EditPage(EditPageViewModel weekViewModel)
-	{
+    {
         ViewModel = weekViewModel;
+        ViewModel.SaveFinished += () =>
+        {
+			Navigation.PopModalAsync();
+		};
 		InitializeComponent();
 	}
 
@@ -30,19 +34,18 @@ public partial class EditPage : ContentPage
 
     private void Save(object sender, EventArgs e)
     {
-
+        Spinner.IsRunning = true;
     }
 
 	private void TimeSpent_TextChanged(object sender, TextChangedEventArgs e)
 	{
-        TimeSpan result;
-        if (TimeSpan.TryParse(e.NewTextValue, out result))
-        {
-            ViewModel.EnteredTimespan = result;
-        } 
-        else
-        {
-            ViewModel.EnteredTimespan = null;
-        }
+		if (TimeSpan.TryParse(e.NewTextValue, out TimeSpan result))
+		{
+			ViewModel.EnteredTimespan = result;
+		}
+		else
+		{
+			ViewModel.EnteredTimespan = null;
+		}
 	}
 }

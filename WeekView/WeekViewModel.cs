@@ -55,6 +55,8 @@ namespace NWork.WeekView
 	public interface IPickerProvider
 	{
 		Task<IEnumerable<SuggestedIssue>> GetPickerSuggestions(string query);
+		Task AddWorklog(Worklog worklog);
+		Task EditWorklog(Worklog worklog);
 	}
 
 	public abstract partial class WeekViewModel: ObservableObject

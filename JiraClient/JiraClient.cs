@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
+using zoft.MauiExtensions.Core.Extensions;
 
 namespace NWork.JiraClient
 {
@@ -126,7 +127,7 @@ namespace NWork.JiraClient
 
 		async Task<WorklogResult> GetIssueWorklogs(string idOrKey)
 		{
-			var response = await client.GetAsync("issue/" + idOrKey + "/worklog");
+			var response = await client.GetAsync($"issue/{idOrKey}/worklog");
 			return await response.Content.ReadAsAsync<WorklogResult>();
 		}
 
@@ -159,5 +160,16 @@ namespace NWork.JiraClient
 			var result = await response.Content.ReadAsAsync<IssuePickerSuggestions>();
 			return result.sections.SelectMany(section => section.issues);
         }
+
+		public async Task AddWorklog(Worklog worklog)
+		{
+			string issueIdOrKey = ! worklog.issueId.IsNullOrEmpty () ? worklog.issueId : worklog.issueKey;
+			await client.PostAsJsonAsync($"issue/{issueIdOrKey}/worklog", worklog);
+		}
+
+		public async Task EditWorklog(Worklog worklog)
+		{
+			
+		}
 	}
 }

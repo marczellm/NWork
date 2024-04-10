@@ -53,5 +53,15 @@ namespace NWork.ViewModel
 		{
 			return this;
 		}
+
+		public async Task AddWorklog(Worklog worklog)
+		{
+			await client.AddWorklog(worklog);
+		}
+
+		public async Task EditWorklog(Worklog worklog)
+		{
+			await client.EditWorklog(worklog);
+		}
 	}
 }

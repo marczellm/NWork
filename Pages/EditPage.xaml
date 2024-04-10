@@ -46,7 +46,8 @@
                         </VisualStateGroupList>
                     </VisualStateManager.VisualStateGroups>
                 </Button>
-            </Grid>
+				<ActivityIndicator HorizontalOptions="End" x:Name="Spinner" HeightRequest="25" WidthRequest="25"/>
+			</Grid>
             <VerticalStackLayout Spacing="10" Padding="10">
                 <Label Text="Issue key"/>
                 <zoft:AutoCompleteEntry x:Name="IssueSearchBar"
@@ -74,7 +75,7 @@
 				<Border Stroke="{Binding InvalidTimespan}">
                     <Entry Placeholder="Time spent" TextChanged="TimeSpent_TextChanged" Text="{Binding EnteredTimespan, Mode=OneWay}"/>
 				</Border>
-				<Button Text="Save" Clicked="Save" IsEnabled="{Binding SaveEnabled}"/>
+				<Button Text="Save" Clicked="Save" Command="{Binding SaveCommand}"/>
             </VerticalStackLayout>
         </VerticalStackLayout>
     </Border>
