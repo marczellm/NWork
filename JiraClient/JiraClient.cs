@@ -175,14 +175,9 @@ namespace NWork.JiraClient
 
 		public async Task<IEnumerable<SuggestedIssue>> GetPickerSuggestions(string query)
 		{
-            var response = await client.GetAsync("issue/picker?query=" + query);
+            var response = await client.GetAsync("issue/picker?currentJQL=&query=" + query);
 			var result = await response.Content.ReadAsAsync<IssuePickerSuggestions>();
 			var ret = result.sections.SelectMany(section => section.issues);
-            SuggestedIssue? issue = await GetIssue(query);
-			if (issue != null)
-			{
-				ret = ret.Append(issue);
-			}
 			return ret;
         }
 
