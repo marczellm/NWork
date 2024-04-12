@@ -71,7 +71,12 @@ namespace NWork.ViewModel
 
 		public async Task<bool> EditWorklog(Worklog worklog)
 		{
-			return await client.EditWorklog(worklog);
+			var ret = await client.EditWorklog(worklog);
+			if (ret)
+			{
+				RefreshCurrentView();
+			}
+			return ret;
 		}
 
         public override async Task<bool> DeleteWorklog(Worklog worklog)

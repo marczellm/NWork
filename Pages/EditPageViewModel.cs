@@ -16,27 +16,28 @@ namespace NWork.Pages
 			client = null!;
 
             saveCommand = new Command(async () => {
-                if (IsEditMode)
+				Worklog worklog = new()
+				{
+					issueId = SelectedIssue!.id,
+					issueKey = SelectedIssue!.key,
+					started = dateTime.ToString("yyyy-MM-dd'T'HH:mm:ss.fff") + dateTime.ToString("zzzz").Replace(":", ""),
+					timeSpentSeconds = (int)(EnteredTimespan?.TotalSeconds ?? 0),
+				};
+				bool success = false;
+				if (IsEditMode)
                 {
-                    bool success = await client.EditWorklog(new()
-                    {
-
-                    });
+					worklog.id = worklogId!;
+                    success = await client.EditWorklog(worklog);
                 }
                 else
                 {
-                    bool success = await client.AddWorklog(new()
-                    {
-                        issueId = SelectedIssue!.id,
-                        started = dateTime.ToString("yyyy-MM-dd'T'HH:mm:ss.fff") + dateTime.ToString("zzzz").Replace(":", ""),
-						timeSpentSeconds = (int) (EnteredTimespan?.TotalSeconds ?? 0),
-                    });
-					if (success)
-					{
-                        SaveFinished?.Invoke();
-                    }
+                    success = await client.AddWorklog(worklog);
                 }
-            }, () => {
+				if (success)
+				{
+					SaveFinished?.Invoke();
+				}
+			}, () => {
                 return SelectedIssue != null && EnteredTimespan != null;
             });
         }

@@ -190,7 +190,9 @@ namespace NWork.JiraClient
 
 		public async Task<bool> EditWorklog(Worklog worklog)
 		{
-			return false;
+			string issueIdOrKey = !worklog.issueId.IsNullOrEmpty() ? worklog.issueId : worklog.issueKey;
+			var response = await client.PutAsJsonAsync($"issue/{issueIdOrKey}/worklog/{worklog.id}", worklog);
+			return response.IsSuccessStatusCode;
 		}
 
 		public async Task<bool> DeleteWorklog(Worklog worklog)
