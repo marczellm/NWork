@@ -5,7 +5,7 @@ namespace NWork.WeekView;
 
 public partial class WeekView : ContentView
 {
-	private bool dragInProgress = false;
+	private TimeOnly? dragStartTime = null;
 
 	public static readonly BindableProperty ViewModelProperty = BindableProperty.Create(
 		nameof(ViewModel), 
@@ -69,26 +69,33 @@ public partial class WeekView : ContentView
         if (relativeY < 0 || relativeY > calendarHeight)
             return null;
 
-        return new TimeOnly(7, 0).Add((relativeY / calendarHeight) * TimeSpan.FromHours(13));
+        return new TimeOnly(7, 0).Add(relativeY / calendarHeight * TimeSpan.FromHours(13));
     }
 
     private void PointerGestureRecognizer_PointerPressed(object sender, PointerEventArgs e)
     {
-		dragInProgress = true;
+		dragStartTime = TimeAtPointer(e);
     }
 
     private void PointerGestureRecognizer_PointerMoved(object sender, PointerEventArgs e)
     {
-		if (!dragInProgress)
+		if (dragStartTime == null)
 			return;
 
 		Debug.WriteLine(TimeAtPointer(e));
     }
 
     private void PointerGestureRecognizer_PointerReleased(object sender, PointerEventArgs e)
-    {
-		dragInProgress = false;
-    }
+	{
+		TimeOnly? pDragEndTime = TimeAtPointer(e);
+		if (this.dragStartTime == null || pDragEndTime == null)
+			return;
+
+		TimeOnly dragStartTime = this.dragStartTime.Value;
+		TimeOnly dragEndTime = pDragEndTime.Value;
+
+		// TODO figure out the day
+	}
 
     private async void StartCreatingNewWorklog(object sender, EventArgs e)
     {

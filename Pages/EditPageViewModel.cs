@@ -47,12 +47,16 @@ namespace NWork.Pages
 			this.client = client;
 		}
 
-		public EditPageViewModel(IPickerProvider client, SuggestedIssue issue, string worklogId, DateTime started, TimeSpan timeSpent) : this(client)
+		public EditPageViewModel(IPickerProvider client, DateTime started, TimeSpan timeSpent) : this(client)
+		{
+			dateTime = started;
+			EnteredTimespan = timeSpent;
+		}
+
+		public EditPageViewModel(IPickerProvider client, SuggestedIssue issue, string worklogId, DateTime started, TimeSpan timeSpent) : this(client, started, timeSpent)
         {
 			this.worklogId = worklogId;
 			SelectedIssue = issue;
-			dateTime = started;
-			EnteredTimespan = timeSpent;
 		}
 
 		public ObservableCollection<SuggestedIssue> SearchResults { get; } = [];
