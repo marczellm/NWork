@@ -1,11 +1,11 @@
 using NWork.Pages;
-using System.Diagnostics;
 
 namespace NWork.WeekView;
 
 public partial class WeekView : ContentView
 {
-	private TimeOnly? dragStartTime = null;
+	private bool skipPointerEvents = false;
+	private DateTime? dragStartTime = null;
 
 	public static readonly BindableProperty ViewModelProperty = BindableProperty.Create(
 		nameof(ViewModel), 
@@ -57,47 +57,93 @@ public partial class WeekView : ContentView
 		Launcher.OpenAsync("https://graphisoft.atlassian.net/browse/" + ((Label)sender).Text);
 	}
 
-	private TimeOnly? TimeAtPointer(PointerEventArgs e)
+	private DateTime? TimeAtPointer(PointerEventArgs e)
 	{
-        Point? optpos = e.GetPosition(EventsGrid);
-        if (optpos == null)
-            return null;
-        Point pos = optpos.Value;
+		Point? optpos = e.GetPosition(EventsGrid);
+		if (optpos == null)
+			return null;
+		Point pos = optpos.Value;
 
-        var calendarHeight = EventsGrid.Height - HeaderRow.Height.Value - TotalRow.Height.Value;
-        var relativeY = pos.Y - HeaderRow.Height.Value;
-        if (relativeY < 0 || relativeY > calendarHeight)
-            return null;
+		var calendarWidth = EventsGrid.Width - HoursColumn.Width.Value;
+		var calendarHeight = EventsGrid.Height - HeaderRow.Height.Value - TotalRow.Height.Value;
+		var relativeX = pos.X - HoursColumn.Width.Value;
+		var relativeY = pos.Y - HeaderRow.Height.Value;
+		if (relativeX < 0 || relativeX > calendarWidth || relativeY < 0 || relativeY > calendarHeight)
+			return null;
 
-        return new TimeOnly(7, 0).Add(relativeY / calendarHeight * TimeSpan.FromHours(13));
-    }
-
-    private void PointerGestureRecognizer_PointerPressed(object sender, PointerEventArgs e)
-    {
-		dragStartTime = TimeAtPointer(e);
-    }
-
-    private void PointerGestureRecognizer_PointerMoved(object sender, PointerEventArgs e)
-    {
-		if (dragStartTime == null)
-			return;
-
-		Debug.WriteLine(TimeAtPointer(e));
-    }
-
-    private void PointerGestureRecognizer_PointerReleased(object sender, PointerEventArgs e)
-	{
-		TimeOnly? pDragEndTime = TimeAtPointer(e);
-		if (this.dragStartTime == null || pDragEndTime == null)
-			return;
-
-		TimeOnly dragStartTime = this.dragStartTime.Value;
-		TimeOnly dragEndTime = pDragEndTime.Value;
-
-		// TODO figure out the day
+		DateTime day = ViewModel.Monday.Add(relativeX / calendarWidth * TimeSpan.FromDays(7));
+		TimeOnly time = new TimeOnly(7, 0).Add(relativeY / calendarHeight * TimeSpan.FromHours(13));
+		return day.Date.Add(time.ToTimeSpan());
 	}
 
-    private async void StartCreatingNewWorklog(object sender, EventArgs e)
+	private static DateTime RoundUp(DateTime dt, TimeSpan d)
+	{
+		var delta = (d.Ticks - (dt.Ticks % d.Ticks)) % d.Ticks;
+		return new DateTime(dt.Ticks + delta);
+	}
+
+	private static DateTime RoundDown(DateTime dt, TimeSpan d)
+	{
+		var delta = dt.Ticks % d.Ticks;
+		return new DateTime(dt.Ticks - delta);
+	}
+
+	private static DateTime RoundToNearestQuarter(DateTime dt)
+	{
+		TimeSpan d = TimeSpan.FromMinutes(15);
+		var delta = dt.Ticks % d.Ticks;
+
+		return delta > d.Ticks / 2 ? RoundUp(dt, d) : RoundDown(dt, d);
+	}
+
+	private void PointerGestureRecognizer_PointerPressed(object sender, PointerEventArgs e)
+    {
+		if (sender != EventsGrid) 
+			skipPointerEvents = true;
+
+		DateTime? dateTime = TimeAtPointer(e);
+		if (dateTime == null || skipPointerEvents)
+			return;
+
+		dragStartTime = RoundToNearestQuarter(dateTime.Value);
+		ViewModel.CurrentlyEditedEvent = new Event
+		{
+			Started = dragStartTime.Value,
+			Duration = TimeSpan.FromMinutes(15),
+			IsPlaceholder = true
+		};
+		ViewModel.Events.Add(ViewModel.CurrentlyEditedEvent);		
+    }
+
+	private void PointerGestureRecognizer_PointerMoved(object sender, PointerEventArgs e)
+	{
+		DateTime? pDragEndTime = TimeAtPointer(e);
+		if (ViewModel.CurrentlyEditedEvent == null || pDragEndTime == null || this.dragStartTime == null || skipPointerEvents)
+			return;
+
+		DateTime dragStartTime = this.dragStartTime.Value;
+		DateTime dragEndTime = RoundToNearestQuarter(pDragEndTime.Value);
+		if (dragStartTime > dragEndTime)
+			(dragStartTime, dragEndTime) = (dragEndTime, dragStartTime);
+
+		ViewModel.CurrentlyEditedEvent.Started = dragStartTime;
+		ViewModel.CurrentlyEditedEvent.Duration = dragEndTime - dragStartTime;
+	}
+
+	private async void PointerGestureRecognizer_PointerReleased(object sender, PointerEventArgs e)
+	{
+		if (skipPointerEvents)
+		{
+			skipPointerEvents = false;
+			return;
+		}
+		DateTime? pDragEndTime = TimeAtPointer(e);
+		if (ViewModel.CurrentlyEditedEvent == null || pDragEndTime == null || sender != EventsGrid)
+			return;
+		await Navigation.PushModalAsync(new EditPage(new EditPageViewModel(ViewModel.GetPickerProvider(), ViewModel.CurrentlyEditedEvent!.Started, ViewModel.CurrentlyEditedEvent.Duration)));
+	}
+
+	private async void StartCreatingNewWorklog(object sender, EventArgs e)
     {
         await Navigation.PushModalAsync(new EditPage(new EditPageViewModel(ViewModel.GetPickerProvider())));
     }
@@ -105,6 +151,9 @@ public partial class WeekView : ContentView
     private async void StartEditingWorklog(object sender, EventArgs e)
     {
 		Event ev = (Event)((BindableObject) sender).BindingContext;
+		if (ev.IsPlaceholder)
+			return;
+
         await Navigation.PushModalAsync(new EditPage(new EditPageViewModel(ViewModel.GetPickerProvider(), new JiraClient.SuggestedIssue()
 		{
 			summaryText = ev.Description,
@@ -114,9 +163,11 @@ public partial class WeekView : ContentView
 
 	private async void DeleteWorklog(object sender, EventArgs e)
 	{
+		Event ev = (Event)((BindableObject)sender).BindingContext;
+		if (ev.IsPlaceholder)
+			return;
 		if (await Shell.Current.DisplayAlert("Delete worklog", "Are you sure?", "OK", "Cancel"))
 		{
-            Event ev = (Event)((BindableObject)sender).BindingContext;
 			await ViewModel.DeleteWorklog(new JiraClient.Worklog { id = ev.Id, issueKey = ev.Title });
 		}
 	}

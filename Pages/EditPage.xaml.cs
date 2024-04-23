@@ -19,6 +19,7 @@ public partial class EditPage : ContentPage
     private void OnCancel(object sender, EventArgs e)
     {
         Navigation.PopModalAsync();
+        ViewModel.RemovePlaceholder();
     }
 
     private async void AutoCompleteEntry_TextChanged(object sender, zoft.MauiExtensions.Controls.AutoCompleteEntryTextChangedEventArgs e)

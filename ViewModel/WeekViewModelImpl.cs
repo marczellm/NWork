@@ -1,5 +1,6 @@
 ﻿using NWork.JiraClient;
 using NWork.WeekView;
+using zoft.MauiExtensions.Core.Extensions;
 
 namespace NWork.ViewModel
 {
@@ -38,14 +39,15 @@ namespace NWork.ViewModel
 		{
             ShowSpinner = true;
             var worklogs = await client.GetWorklogsBetween(Monday, Sunday + TimeSpan.FromHours(23));
-            Events = worklogs.Select(worklog => new Event()
+			Events.Clear();
+            Events.AddRange(worklogs.Select(worklog => new Event
             {
                 Id = worklog.id,
                 Title = worklog.issueKey,
                 Started = DateTime.Parse(worklog.started),
                 Duration = TimeSpan.FromSeconds(worklog.timeSpentSeconds),
                 Description = worklog.issueTitle
-            });
+            }));
             ShowSpinner = false;
         }
 
@@ -62,6 +64,7 @@ namespace NWork.ViewModel
 		public async Task<bool> AddWorklog(Worklog worklog)
 		{
 			var ret = await client.AddWorklog(worklog);
+			RemovePlaceholder();
 			if (ret)
 			{
 				RefreshCurrentView();
@@ -88,5 +91,14 @@ namespace NWork.ViewModel
 			}
 			return ret;
         }
+
+		public void RemovePlaceholder()
+		{
+			if (CurrentlyEditedEvent != null)
+			{
+				Events.Remove(CurrentlyEditedEvent);
+				CurrentlyEditedEvent = null;
+			}
+		}
     }
 }

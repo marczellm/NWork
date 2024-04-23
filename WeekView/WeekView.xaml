@@ -207,19 +207,32 @@
 			</Grid.ColumnDefinitions>
 			<BindableLayout.ItemTemplate>
 				<DataTemplate>
-					<Border Background="White" Grid.Row="{Binding Row}" Grid.Column="{Binding Column}" Grid.RowSpan="{Binding RowSpan}"
+					<Border Background="White" 
+							Grid.Row="{Binding Row}" Grid.Column="{Binding Column}" Grid.RowSpan="{Binding RowSpan}"
 							ToolTipProperties.Text="{Binding Tooltip}"
 							x:DataType="weekview:Event">
 						<Border.StrokeShape>
 							<RoundRectangle CornerRadius="2"/>
 						</Border.StrokeShape>
+						<Border.Triggers>
+							<DataTrigger TargetType="Border"
+										 Binding="{Binding IsPlaceholder}"
+										 Value="True">
+								<Setter Property="Background" Value="Black" />
+								<Setter Property="Opacity" Value="0.7"/>
+							</DataTrigger>
+						</Border.Triggers>
 						<Grid>
 							<Grid.RowDefinitions>
 								<RowDefinition Height="Auto"/>
 								<RowDefinition/>
 								<RowDefinition Height="Auto"/>
 							</Grid.RowDefinitions>
-                            <FlyoutBase.ContextFlyout>
+							<Grid.GestureRecognizers>
+								<PointerGestureRecognizer PointerPressed="PointerGestureRecognizer_PointerPressed"
+														  PointerReleased="PointerGestureRecognizer_PointerReleased"/>
+							</Grid.GestureRecognizers>
+							<FlyoutBase.ContextFlyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem Text="Edit" Clicked="StartEditingWorklog"/>
                                     <MenuFlyoutItem Text="Delete" Clicked="DeleteWorklog"/>

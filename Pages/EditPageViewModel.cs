@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using NWork.JiraClient;
 using NWork.WeekView;
-using System;
 using System.Collections.ObjectModel;
 
 namespace NWork.Pages
@@ -113,6 +112,11 @@ namespace NWork.Pages
 		public Task<IEnumerable<SuggestedIssue>> GetPickerSuggestions(string query)
 		{
 			return client.GetPickerSuggestions(query);
+		}
+
+		public void RemovePlaceholder()
+		{
+			client.RemovePlaceholder();
 		}
 
 		public delegate void SaveFinishedEvent();

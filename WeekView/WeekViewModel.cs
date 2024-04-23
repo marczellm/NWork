@@ -1,15 +1,42 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using NWork.JiraClient;
+using System.Collections.ObjectModel;
 
 namespace NWork.WeekView
 {
-	public class Event
+	public class Event: ObservableObject
 	{
+		private TimeSpan duration;
+		private DateTime started;
+
 		public string Id { get; set; } = string.Empty;
 		public string Title { get; set; } = string.Empty;
 		public string Description { get; set; } = string.Empty;
-		public DateTime Started { get; set; }
-		public TimeSpan Duration { get; set; }
+		public DateTime Started
+		{
+			get => started; 
+			set
+			{
+				OnPropertyChanged();
+				OnPropertyChanged(nameof(Column));
+				OnPropertyChanged(nameof(Row));
+				OnPropertyChanged(nameof(Tooltip));
+				started = value;
+			}
+		}
+		public TimeSpan Duration
+		{
+			get => duration; 
+			set
+			{
+				OnPropertyChanged();
+				OnPropertyChanged(nameof(RowSpan));
+				OnPropertyChanged(nameof(Tooltip));
+				duration = value;
+			}
+		}
+
+		public bool IsPlaceholder { get; set; } = false; // dragging the mouse will create a temporary rect that looks different
 
 		public uint Column
 		{
@@ -57,6 +84,7 @@ namespace NWork.WeekView
 		Task<IEnumerable<SuggestedIssue>> GetPickerSuggestions(string query);
 		Task<bool> AddWorklog(Worklog worklog);
 		Task<bool> EditWorklog(Worklog worklog);
+		void RemovePlaceholder();
 	}
 
 	public abstract partial class WeekViewModel: ObservableObject
@@ -66,7 +94,8 @@ namespace NWork.WeekView
 		[ObservableProperty]
 		private bool showSpinner = false;
 
-		private IEnumerable<Event> events = [];
+		private ObservableCollection<Event> events = [];
+		internal Event? CurrentlyEditedEvent = null;
 
 		public DateTime Monday
 		{
@@ -161,7 +190,7 @@ namespace NWork.WeekView
 			}
 		}
 
-		public IEnumerable<Event> Events
+		public ObservableCollection<Event> Events
 		{
 			get => events; 
 			set
