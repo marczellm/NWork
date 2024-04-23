@@ -94,8 +94,23 @@ namespace NWork.WeekView
 		[ObservableProperty]
 		private bool showSpinner = false;
 
-		private ObservableCollection<Event> events = [];
 		internal Event? CurrentlyEditedEvent = null;
+
+		protected WeekViewModel() 
+		{
+			Events.CollectionChanged += (sender, e) =>
+			{
+				OnPropertyChanged(nameof(MondayTotal));
+				OnPropertyChanged(nameof(TuesdayTotal));
+				OnPropertyChanged(nameof(WednesdayTotal));
+				OnPropertyChanged(nameof(ThursdayTotal));
+				OnPropertyChanged(nameof(FridayTotal));
+				OnPropertyChanged(nameof(Saturday));
+				OnPropertyChanged(nameof(SundayTotal));
+				OnPropertyChanged(nameof(WeekTotal));
+			};
+			GoToday();
+		}
 
 		public DateTime Monday
 		{
@@ -190,28 +205,7 @@ namespace NWork.WeekView
 			}
 		}
 
-		public ObservableCollection<Event> Events
-		{
-			get => events; 
-			set
-			{
-				events = value;
-				OnPropertyChanged();
-				OnPropertyChanged(nameof(MondayTotal));
-				OnPropertyChanged(nameof(TuesdayTotal));
-				OnPropertyChanged(nameof(WednesdayTotal));
-				OnPropertyChanged(nameof(ThursdayTotal));
-				OnPropertyChanged(nameof(FridayTotal));
-				OnPropertyChanged(nameof(Saturday));
-				OnPropertyChanged(nameof(SundayTotal));
-				OnPropertyChanged(nameof(WeekTotal));
-			}
-		}
-
-		protected WeekViewModel()
-		{
-			GoToday();
-		}
+		public ObservableCollection<Event> Events { get; set; } = [];
 
 		public void PrevWeek()
 		{

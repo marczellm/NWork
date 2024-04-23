@@ -22,7 +22,7 @@ namespace NWork.ViewModel
 
 		private void OnLoggedOut(object? sender, EventArgs e)
 		{
-			Events = [];
+			Events.Clear();
 		}
 
 
@@ -30,7 +30,7 @@ namespace NWork.ViewModel
 		{
 			if (e.PropertyName == nameof(Monday))
             {
-                Events = [];
+                Events.Clear();
                 RefreshCurrentView();
 			}
 		}
