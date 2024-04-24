@@ -2,9 +2,17 @@ using NWork.Pages;
 
 namespace NWork.WeekView;
 
+enum DragGestureType
+{
+	Nothing,
+	NewEvent,
+	MovingEvent,
+	ResizingEvent
+}
+
 public partial class WeekView : ContentView
 {
-	private bool skipPointerEvents = false;
+	private DragGestureType dragType = DragGestureType.Nothing;
 	private DateTime? dragStartTime = null;
 
 	public static readonly BindableProperty ViewModelProperty = BindableProperty.Create(
@@ -96,15 +104,13 @@ public partial class WeekView : ContentView
 		return delta > d.Ticks / 2 ? RoundUp(dt, d) : RoundDown(dt, d);
 	}
 
-	private void PointerGestureRecognizer_PointerPressed(object sender, PointerEventArgs e)
+	private void Calendar_PointerPressed(object sender, PointerEventArgs e)
     {
-		if (sender != EventsGrid) 
-			skipPointerEvents = true;
-
 		DateTime? dateTime = TimeAtPointer(e);
-		if (dateTime == null || skipPointerEvents)
+		if (dateTime == null || dragType != DragGestureType.Nothing)
 			return;
 
+		dragType = DragGestureType.NewEvent;
 		dragStartTime = RoundToNearestQuarter(dateTime.Value);
 		ViewModel.CurrentlyEditedEvent = new Event
 		{
@@ -115,10 +121,10 @@ public partial class WeekView : ContentView
 		ViewModel.Events.Add(ViewModel.CurrentlyEditedEvent);		
     }
 
-	private void PointerGestureRecognizer_PointerMoved(object sender, PointerEventArgs e)
+	private void Calendar_PointerMoved(object sender, PointerEventArgs e)
 	{
 		DateTime? pDragEndTime = TimeAtPointer(e);
-		if (ViewModel.CurrentlyEditedEvent == null || pDragEndTime == null || this.dragStartTime == null || skipPointerEvents)
+		if (ViewModel.CurrentlyEditedEvent == null || pDragEndTime == null || this.dragStartTime == null || dragType != DragGestureType.NewEvent)
 			return;
 
 		DateTime dragStartTime = this.dragStartTime.Value;
@@ -130,17 +136,46 @@ public partial class WeekView : ContentView
 		ViewModel.CurrentlyEditedEvent.Duration = dragEndTime - dragStartTime;
 	}
 
-	private async void PointerGestureRecognizer_PointerReleased(object sender, PointerEventArgs e)
+	private async void Calendar_PointerReleased(object sender, PointerEventArgs e)
 	{
-		if (skipPointerEvents)
-		{
-			skipPointerEvents = false;
-			return;
-		}
 		DateTime? pDragEndTime = TimeAtPointer(e);
-		if (ViewModel.CurrentlyEditedEvent == null || pDragEndTime == null || sender != EventsGrid)
+		if (ViewModel.CurrentlyEditedEvent == null || pDragEndTime == null || sender != EventsGrid || dragType != DragGestureType.NewEvent)
 			return;
 		await Navigation.PushModalAsync(new EditPage(new EditPageViewModel(ViewModel.GetPickerProvider(), ViewModel.CurrentlyEditedEvent!.Started, ViewModel.CurrentlyEditedEvent.Duration)));
+		dragType = DragGestureType.Nothing;
+	}
+
+	private void Event_PointerEntered(object sender, PointerEventArgs e)
+	{
+
+	}
+
+	private void Event_PointerPressed(object sender, PointerEventArgs e)
+	{
+		if (dragType != DragGestureType.Nothing)
+		{
+			return;
+		}
+		dragType = DragGestureType.MovingEvent;
+	}
+
+	private void Event_PointerMoved(object sender, PointerEventArgs e)
+	{
+		
+	}
+
+	private void Event_PointerReleased(object sender, PointerEventArgs e)
+	{
+		if (dragType == DragGestureType.NewEvent)
+		{
+			return;
+		}
+		dragType = DragGestureType.Nothing;
+	}
+
+	private void Event_PointerExited(object sender, PointerEventArgs e)
+	{
+
 	}
 
 	private async void StartCreatingNewWorklog(object sender, EventArgs e)

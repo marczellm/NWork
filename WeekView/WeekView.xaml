@@ -135,9 +135,9 @@
               ZIndex="20"
 			  BindableLayout.ItemsSource="{Binding Events}">
             <Grid.GestureRecognizers>
-                <PointerGestureRecognizer PointerPressed="PointerGestureRecognizer_PointerPressed"
-                                          PointerMoved="PointerGestureRecognizer_PointerMoved"
-                                          PointerReleased="PointerGestureRecognizer_PointerReleased"/>
+                <PointerGestureRecognizer PointerPressed="Calendar_PointerPressed"
+                                          PointerMoved="Calendar_PointerMoved"
+                                          PointerReleased="Calendar_PointerReleased"/>
             </Grid.GestureRecognizers>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="20"/>
@@ -229,8 +229,11 @@
 								<RowDefinition Height="Auto"/>
 							</Grid.RowDefinitions>
 							<Grid.GestureRecognizers>
-								<PointerGestureRecognizer PointerPressed="PointerGestureRecognizer_PointerPressed"
-														  PointerReleased="PointerGestureRecognizer_PointerReleased"/>
+								<PointerGestureRecognizer PointerPressed="Event_PointerPressed"
+														  PointerMoved="Event_PointerMoved"
+														  PointerReleased="Event_PointerReleased"
+														  PointerEntered="Event_PointerEntered"
+														  PointerExited="Event_PointerExited"/>
 							</Grid.GestureRecognizers>
 							<FlyoutBase.ContextFlyout>
                                 <MenuFlyout>
