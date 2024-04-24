@@ -161,7 +161,7 @@ public partial class WeekView : ContentView
 
 	private void Event_PointerMoved(object sender, PointerEventArgs e)
 	{
-		
+
 	}
 
 	private void Event_PointerReleased(object sender, PointerEventArgs e)

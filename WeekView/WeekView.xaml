@@ -2,7 +2,8 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-			 xmlns:weekview="clr-namespace:NWork.WeekView"
+			 xmlns:weekview="clr-namespace:NWork.WeekView"			 
+			 xmlns:mauicursor="clr-namespace:NWork.MauiCursor"
 			 xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
              x:Class="NWork.WeekView.WeekView"
 			 x:Name="this">
@@ -223,31 +224,44 @@
 							</DataTrigger>
 						</Border.Triggers>
 						<Grid>
-							<Grid.RowDefinitions>
-								<RowDefinition Height="Auto"/>
-								<RowDefinition/>
-								<RowDefinition Height="Auto"/>
-							</Grid.RowDefinitions>
-							<Grid.GestureRecognizers>
-								<PointerGestureRecognizer PointerPressed="Event_PointerPressed"
-														  PointerMoved="Event_PointerMoved"
-														  PointerReleased="Event_PointerReleased"
-														  PointerEntered="Event_PointerEntered"
-														  PointerExited="Event_PointerExited"/>
-							</Grid.GestureRecognizers>
-							<FlyoutBase.ContextFlyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem Text="Edit" Clicked="StartEditingWorklog"/>
-                                    <MenuFlyoutItem Text="Delete" Clicked="DeleteWorklog"/>
-                                </MenuFlyout>
-                            </FlyoutBase.ContextFlyout>
-							<Label Grid.Row="0" Text="{Binding Description}"/>
-							<Label Grid.Row="2" Text="{Binding Title}" TextColor="DodgerBlue">
-								<Label.GestureRecognizers>
-									<TapGestureRecognizer Tapped="IssueLinkTapped"/>
-								</Label.GestureRecognizers>
-							</Label>
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition/>
+									<RowDefinition Height="Auto"/>
+								</Grid.RowDefinitions>
+								<Grid.GestureRecognizers>
+									<PointerGestureRecognizer PointerPressed="Event_PointerPressed"
+											  PointerMoved="Event_PointerMoved"
+											  PointerReleased="Event_PointerReleased"
+											  PointerEntered="Event_PointerEntered"
+											  PointerExited="Event_PointerExited"/>
+								</Grid.GestureRecognizers>
+								<FlyoutBase.ContextFlyout>
+									<MenuFlyout>
+										<MenuFlyoutItem Text="Edit" Clicked="StartEditingWorklog"/>
+										<MenuFlyoutItem Text="Delete" Clicked="DeleteWorklog"/>
+									</MenuFlyout>
+								</FlyoutBase.ContextFlyout>
+								<Label Grid.Row="0" Text="{Binding Description}"/>
+								<Label Grid.Row="2" Text="{Binding Title}" TextColor="DodgerBlue">
+									<Label.GestureRecognizers>
+										<TapGestureRecognizer Tapped="IssueLinkTapped"/>
+									</Label.GestureRecognizers>
+								</Label>
+							</Grid>
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="5"/>
+									<RowDefinition/>
+									<RowDefinition Height="5"/>
+								</Grid.RowDefinitions>
+								<Label Grid.Row="0" mauicursor:CursorBehavior.Cursor="ResizeDown"/>
+								<Label Grid.Row="1" mauicursor:CursorBehavior.Cursor="Move"/>
+								<Label Grid.Row="2" mauicursor:CursorBehavior.Cursor="ResizeUp"/>
+							</Grid>
 						</Grid>
+						
 					</Border>
 				</DataTemplate>
 			</BindableLayout.ItemTemplate>

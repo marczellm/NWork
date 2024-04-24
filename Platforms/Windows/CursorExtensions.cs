@@ -1,4 +1,4 @@
-﻿namespace MauiCursor;
+﻿namespace NWork.MauiCursor;
 
 using System.Reflection;
 using Microsoft.Maui.Controls;
@@ -41,9 +41,12 @@ public static class CursorExtensions
             CursorIcon.IBeam => CoreCursorType.IBeam,
             CursorIcon.Cross => CoreCursorType.Cross,
             CursorIcon.Arrow => CoreCursorType.Arrow,
-            CursorIcon.ResizeUpDown => CoreCursorType.SizeNorthSouth,
+			CursorIcon.ResizeUp => CoreCursorType.SizeNorthSouth,
+			CursorIcon.ResizeDown => CoreCursorType.SizeNorthSouth,
+			CursorIcon.ResizeUpDown => CoreCursorType.SizeNorthSouth,
             CursorIcon.ResizeLeftRight => CoreCursorType.SizeWestEast,
             CursorIcon.Wait => CoreCursorType.Wait,
+            CursorIcon.Move => CoreCursorType.SizeAll,
             _ => CoreCursorType.Arrow,
         };
     }

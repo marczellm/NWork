@@ -1,4 +1,4 @@
-﻿namespace MauiCursor;
+﻿namespace NWork.MauiCursor;
 
 public enum CursorIcon
 {
@@ -7,6 +7,9 @@ public enum CursorIcon
     Arrow,
     IBeam,
     Cross,
+    ResizeUp,
+    ResizeDown,
     ResizeUpDown,
-    ResizeLeftRight
+    ResizeLeftRight,
+    Move
 }

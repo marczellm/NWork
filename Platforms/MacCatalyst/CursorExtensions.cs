@@ -1,6 +1,8 @@
-﻿using AppKit;
-using MauiCursor;
+﻿namespace NWork.MauiCursor;
+
+using AppKit;
 using Microsoft.Maui.Platform;
+using ObjCRuntime;
 using UIKit;
 
 public static class CursorExtensions
@@ -31,7 +33,13 @@ public static class CursorExtensions
         }));
     }
 
-    static NSCursor GetNSCursor(CursorIcon cursor)
+	static NSCursor getUndocumentedCursor(string cursorType)
+	{
+		var nsCursor = Runtime.GetNSObject(Class.GetHandle(nameof(NSCursor)));
+		return (NSCursor) nsCursor!.PerformSelector(new Selector(cursorType));
+	}
+
+	static NSCursor GetNSCursor(CursorIcon cursor)
     {
         return cursor switch
         {
@@ -39,7 +47,10 @@ public static class CursorExtensions
             CursorIcon.IBeam => NSCursor.IBeamCursor,
             CursorIcon.Cross => NSCursor.CrosshairCursor,
             CursorIcon.Arrow => NSCursor.ArrowCursor,
-            CursorIcon.ResizeUpDown => NSCursor.ResizeUpDownCursor,
+            CursorIcon.Move => getUndocumentedCursor("_moveCursor"),
+			CursorIcon.ResizeUp => NSCursor.ResizeUpCursor,
+			CursorIcon.ResizeDown => NSCursor.ResizeDownCursor,
+			CursorIcon.ResizeUpDown => NSCursor.ResizeUpDownCursor,
             CursorIcon.ResizeLeftRight => NSCursor.ResizeLeftRightCursor,
             CursorIcon.Wait => NSCursor.OperationNotAllowedCursor,
             _ => NSCursor.ArrowCursor,
