@@ -139,10 +139,11 @@ public partial class WeekView : ContentView
 	private async void Calendar_PointerReleased(object sender, PointerEventArgs e)
 	{
 		DateTime? pDragEndTime = TimeAtPointer(e);
-		if (ViewModel.CurrentlyEditedEvent == null || pDragEndTime == null || sender != EventsGrid || dragType != DragGestureType.NewEvent)
+		var dragTypeWas = dragType;
+		dragType = DragGestureType.Nothing;
+		if (ViewModel.CurrentlyEditedEvent == null || pDragEndTime == null || sender != EventsGrid || dragTypeWas != DragGestureType.NewEvent)
 			return;
 		await Navigation.PushModalAsync(new EditPage(new EditPageViewModel(ViewModel.GetPickerProvider(), ViewModel.CurrentlyEditedEvent!.Started, ViewModel.CurrentlyEditedEvent.Duration)));
-		dragType = DragGestureType.Nothing;
 	}
 
 	private void Event_PointerEntered(object sender, PointerEventArgs e)

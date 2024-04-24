@@ -230,13 +230,6 @@
 									<RowDefinition/>
 									<RowDefinition Height="Auto"/>
 								</Grid.RowDefinitions>
-								<Grid.GestureRecognizers>
-									<PointerGestureRecognizer PointerPressed="Event_PointerPressed"
-											  PointerMoved="Event_PointerMoved"
-											  PointerReleased="Event_PointerReleased"
-											  PointerEntered="Event_PointerEntered"
-											  PointerExited="Event_PointerExited"/>
-								</Grid.GestureRecognizers>
 								<FlyoutBase.ContextFlyout>
 									<MenuFlyout>
 										<MenuFlyoutItem Text="Edit" Clicked="StartEditingWorklog"/>
@@ -251,6 +244,13 @@
 								</Label>
 							</Grid>
 							<Grid>
+								<Grid.GestureRecognizers>
+									<PointerGestureRecognizer PointerPressed="Event_PointerPressed"
+											  PointerMoved="Event_PointerMoved"
+											  PointerReleased="Event_PointerReleased"
+											  PointerEntered="Event_PointerEntered"
+											  PointerExited="Event_PointerExited"/>
+								</Grid.GestureRecognizers>
 								<Grid.RowDefinitions>
 									<RowDefinition Height="5"/>
 									<RowDefinition/>
