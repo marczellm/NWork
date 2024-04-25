@@ -224,18 +224,18 @@
 							</DataTrigger>
 						</Border.Triggers>
 						<Grid>
+							<FlyoutBase.ContextFlyout>
+								<MenuFlyout>
+									<MenuFlyoutItem Text="Edit" Clicked="StartEditingWorklog"/>
+									<MenuFlyoutItem Text="Delete" Clicked="DeleteWorklog"/>
+								</MenuFlyout>
+							</FlyoutBase.ContextFlyout>
 							<Grid>
 								<Grid.RowDefinitions>
 									<RowDefinition Height="Auto"/>
 									<RowDefinition/>
 									<RowDefinition Height="Auto"/>
 								</Grid.RowDefinitions>
-								<FlyoutBase.ContextFlyout>
-									<MenuFlyout>
-										<MenuFlyoutItem Text="Edit" Clicked="StartEditingWorklog"/>
-										<MenuFlyoutItem Text="Delete" Clicked="DeleteWorklog"/>
-									</MenuFlyout>
-								</FlyoutBase.ContextFlyout>
 								<Label Grid.Row="0" Text="{Binding Description}"/>
 								<Label Grid.Row="2" Text="{Binding Title}" TextColor="DodgerBlue">
 									<Label.GestureRecognizers>
@@ -257,11 +257,10 @@
 									<RowDefinition Height="5"/>
 								</Grid.RowDefinitions>
 								<Label Grid.Row="0" mauicursor:CursorBehavior.Cursor="ResizeDown"/>
-								<Label Grid.Row="1" mauicursor:CursorBehavior.Cursor="Move"/>
+								<Label Grid.Row="1"/>
 								<Label Grid.Row="2" mauicursor:CursorBehavior.Cursor="ResizeUp"/>
 							</Grid>
 						</Grid>
-						
 					</Border>
 				</DataTemplate>
 			</BindableLayout.ItemTemplate>

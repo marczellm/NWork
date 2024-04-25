@@ -47,7 +47,7 @@ public static class CursorExtensions
             CursorIcon.IBeam => NSCursor.IBeamCursor,
             CursorIcon.Cross => NSCursor.CrosshairCursor,
             CursorIcon.Arrow => NSCursor.ArrowCursor,
-            CursorIcon.Move => getUndocumentedCursor("_moveCursor"),
+            // CursorIcon.Move => getUndocumentedCursor("_moveCursor"),
 			CursorIcon.ResizeUp => NSCursor.ResizeUpCursor,
 			CursorIcon.ResizeDown => NSCursor.ResizeDownCursor,
 			CursorIcon.ResizeUpDown => NSCursor.ResizeUpDownCursor,

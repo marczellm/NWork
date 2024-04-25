@@ -153,6 +153,12 @@ public partial class WeekView : ContentView
 
 	private void Event_PointerPressed(object sender, PointerEventArgs e)
 	{
+		if (dragType == DragGestureType.NewEvent) 
+		{
+			dragType = DragGestureType.Nothing;
+			ViewModel.GetPickerProvider().RemovePlaceholder();
+			return;
+		}
 		if (dragType != DragGestureType.Nothing)
 		{
 			return;
