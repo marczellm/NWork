@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Diagnostics;
+using System.Net.Http.Headers;
 using System.Text;
 using zoft.MauiExtensions.Core.Extensions;
 
@@ -77,6 +78,8 @@ namespace NWork.JiraClient
 
 	public class JiraClient
 	{
+		private User? User { get; set; }
+
 		private readonly HttpClient client = new()
 		{
 			BaseAddress = new Uri("https://graphisoft.atlassian.net/rest/api/3/")
@@ -96,6 +99,7 @@ namespace NWork.JiraClient
 			var user = await GetUser();
 			if (user != null)
 			{
+				User = user;
 				Preferences.Default.Set("username", username);
 				Preferences.Default.Set("apitoken", apitoken);
 				LoggedIn?.Invoke(user);
@@ -107,6 +111,7 @@ namespace NWork.JiraClient
 		public void Logout()
 		{
 			client.DefaultRequestHeaders.Authorization = null;
+			User = null;
 			LoggedOut?.Invoke(this, new());
 		}
 
@@ -147,6 +152,7 @@ namespace NWork.JiraClient
 				{
 					worklogResult = await GetIssueWorklogs(issue.key);
 				}
+				worklogResult.worklogs = worklogResult.worklogs.Where(worklog => worklog.author!.accountId == User!.accountId);
 				foreach (var worklog in worklogResult.worklogs)
 				{					
 					worklog.issueKey = issue.key;
