@@ -105,7 +105,7 @@ namespace NWork.WeekView
 				OnPropertyChanged(nameof(WednesdayTotal));
 				OnPropertyChanged(nameof(ThursdayTotal));
 				OnPropertyChanged(nameof(FridayTotal));
-				OnPropertyChanged(nameof(Saturday));
+				OnPropertyChanged(nameof(SaturdayTotal));
 				OnPropertyChanged(nameof(SundayTotal));
 				OnPropertyChanged(nameof(WeekTotal));
 			};
