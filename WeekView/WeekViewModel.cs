@@ -108,6 +108,7 @@ namespace NWork.WeekView
 				OnPropertyChanged(nameof(SaturdayTotal));
 				OnPropertyChanged(nameof(SundayTotal));
 				OnPropertyChanged(nameof(WeekTotal));
+				OnPropertyChanged(nameof(WeekTotalHours));
 			};
 			GoToday();
 		}
@@ -202,6 +203,14 @@ namespace NWork.WeekView
 			get
 			{
 				return Events.Aggregate(TimeSpan.Zero, (partialSum, ev) => partialSum + ev.Duration);
+			}
+		}
+
+		public uint WeekTotalHours 
+		{
+			get
+			{
+				return (uint) Math.Floor(WeekTotal.TotalHours);
 			}
 		}
 
