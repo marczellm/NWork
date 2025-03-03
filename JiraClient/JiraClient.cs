@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using zoft.MauiExtensions.Core.Extensions;
@@ -92,8 +92,10 @@ namespace NWork.JiraClient
 		{
 			var buffer = Encoding.UTF8.GetBytes(username + ":" + apitoken);
 			string base64token = Convert.ToBase64String(buffer);
-
-			client = new() { BaseAddress = new Uri(siteurl + "/rest/api/3/") };
+			CookieContainer cookieContainer = new();
+			cookieContainer.Add(new Uri(siteurl), new Cookie("tenant.session.token", apitoken));
+			HttpClientHandler httpHandler = new() { CookieContainer = cookieContainer };
+			client = new(httpHandler) { BaseAddress = new Uri(siteurl + "/rest/api/3/") };
 			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64token);
 
