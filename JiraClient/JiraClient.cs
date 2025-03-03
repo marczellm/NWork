@@ -78,28 +78,31 @@ namespace NWork.JiraClient
 
 	public class JiraClient
 	{
+		public string SiteUrl { get; private set; } = "";
+
 		private User? User { get; set; }
 
-		private readonly HttpClient client = new()
-		{
-			BaseAddress = new Uri("https://graphisoft.atlassian.net/rest/api/3/")
-		};
+		private HttpClient client = new();
 
 		public JiraClient()
 		{
-			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 		}
 
-		public async Task<bool> Login(string username, string apitoken)
+		public async Task<bool> Login(string siteurl, string username, string apitoken)
 		{
 			var buffer = Encoding.UTF8.GetBytes(username + ":" + apitoken);
 			string base64token = Convert.ToBase64String(buffer);
+
+			client = new() { BaseAddress = new Uri(siteurl + "/rest/api/3/") };
+			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64token);
 
 			var user = await GetUser();
 			if (user != null)
 			{
+				SiteUrl = siteurl;
 				User = user;
+				Preferences.Default.Set("siteurl", siteurl);
 				Preferences.Default.Set("username", username);
 				Preferences.Default.Set("apitoken", apitoken);
 				LoggedIn?.Invoke(user);

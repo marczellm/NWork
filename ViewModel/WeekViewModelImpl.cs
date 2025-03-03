@@ -100,5 +100,10 @@ namespace NWork.ViewModel
 				CurrentlyEditedEvent = null;
 			}
 		}
+
+		public override void LaunchIssueInBrowser(string issueKey) 
+		{
+			Launcher.OpenAsync(client.SiteUrl + "/browse/" + issueKey);
+		}
     }
 }

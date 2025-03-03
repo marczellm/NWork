@@ -15,12 +15,12 @@ namespace NWork
 			LogoutButton.IconImageSource = imageSource;
 
 			// Get previous login from preferences
-
+			string siteurl = Preferences.Default.Get("siteurl", "");
 			string username = Preferences.Default.Get("username", "");
 			string apitoken = Preferences.Default.Get("apitoken", "");
-			if (username != "" && apitoken != "")
+			if (siteurl != "" && username != "" && apitoken != "")
 			{
-				_ = client.Login(username, apitoken);
+				_ = client.Login(siteurl, username, apitoken);
 			}
 		}
 
@@ -38,6 +38,7 @@ namespace NWork
 		private async void Login_Clicked(object sender, EventArgs e)
 		{
 			await Navigation.PushModalAsync(new LoginPage(client,
+				Preferences.Default.Get("siteurl", ""),
 				Preferences.Default.Get("username", ""),
 				Preferences.Default.Get("apitoken", "")));
 		}

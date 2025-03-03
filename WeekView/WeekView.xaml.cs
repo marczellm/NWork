@@ -62,7 +62,7 @@ public partial class WeekView : ContentView
 
 	private void IssueLinkTapped(object sender, TappedEventArgs e)
 	{
-		Launcher.OpenAsync("https://graphisoft.atlassian.net/browse/" + ((Label)sender).Text);
+		ViewModel.LaunchIssueInBrowser(((Label)sender).Text);
 	}
 
 	private DateTime? TimeAtPointer(PointerEventArgs e)

@@ -47,7 +47,8 @@
 					</VisualStateManager.VisualStateGroups>
 				</Button>
 			</Grid>		
-			<VerticalStackLayout Spacing="10" Padding="10">					
+			<VerticalStackLayout Spacing="10" Padding="10">				
+				<Entry Placeholder="Atlassian site URL" x:Name="SiteUrlField" />	
 				<Entry Placeholder="User email" x:Name="UsernameField" />
 				<Editor Placeholder="API token" HeightRequest="100" x:Name="TokenField"/>
 				<Label Text="Manage API tokens" HorizontalTextAlignment="Center" TextColor="DodgerBlue" TextDecorations="Underline">

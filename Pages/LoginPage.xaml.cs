@@ -16,10 +16,11 @@ public partial class LoginPage : ContentPage
 		}
 	}
 
-	public LoginPage(JiraClient.JiraClient client, string initUserName, string initToken)
+	public LoginPage(JiraClient.JiraClient client, string initSiteUrl, string initUserName, string initToken)
 	{
 		this.client = client;
 		InitializeComponent();
+		SiteUrlField.Text = initSiteUrl;
 		UsernameField.Text = initUserName;
 		TokenField.Text = initToken;
 	}
@@ -32,7 +33,7 @@ public partial class LoginPage : ContentPage
 	private async void DoLogin(object sender, EventArgs e)
 	{
 		ErrorVisible = false;
-		if (await client.Login(UsernameField.Text, TokenField.Text))
+		if (await client.Login(SiteUrlField.Text, UsernameField.Text, TokenField.Text))
 		{
 			await Navigation.PopModalAsync();
 		}

@@ -255,5 +255,7 @@ namespace NWork.WeekView
         public abstract Task<bool> DeleteWorklog(Worklog worklog);
 
 		public abstract void RefreshCurrentView();
+
+		public abstract void LaunchIssueInBrowser(string issueKey);
     }
 }
