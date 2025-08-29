@@ -27,7 +27,8 @@
 						TextColor="Blue" 
 						BackgroundColor="Transparent"
 						Clicked="OnCancel"
-						BorderWidth="0">
+						BorderWidth="0"
+						WidthRequest="{OnPlatform MacCatalyst=75}">
 					<VisualStateManager.VisualStateGroups>
 						<VisualStateGroupList>
 							<VisualStateGroup x:Name="CommonStates">

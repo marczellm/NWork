@@ -39,7 +39,7 @@
 						<Button Clicked="PrevWeek" HorizontalOptions="Center" Text="{mi:FontAwesomeSolid Icon=ChevronLeft}"/>
 					</On>
 				</OnPlatform>
-				<Button Text="Today" Clicked="Today"/>
+				<Button Text="Today" Clicked="Today" WidthRequest="{OnPlatform MacCatalyst=75}"/>
 				<OnPlatform x:TypeArguments="Button">
 					<On Platform="WinUI">
 						<Button Clicked="NextWeek" HorizontalOptions="Center" Text="&#xf054;" FontFamily="FontAwesome6Free-Solid-900.otf"/>
